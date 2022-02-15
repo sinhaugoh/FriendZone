@@ -3,10 +3,11 @@ from django.db import models
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 
-DEFAULT_PROFILE_IMAGE_PATH = 'default_images/default_profile.png'
+DEFAULT_PROFILE_IMAGE_PATH = 'images/default_images/default_profile.png'
 
+# retrieve profile image path
 def get_profile_image_path(instance, filename):
-    return 'profile_images/{}/{}'.format(str(instance.pk), filename)
+    return 'images/profile_images/{}/{}'.format(str(instance.pk), filename)
 
 
 class AppUserManager(BaseUserManager):
