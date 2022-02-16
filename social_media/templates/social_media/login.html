@@ -1,0 +1,9 @@
+{% extends 'social_media/base.html' %}
+
+{% block content %}
+<form action="/login/" method="post"> {% csrf_token %}
+{{ login_form.as_p }}
+<input type="submit" value="Login">
+</form>
+<a href= {% url 'register' %}>Register now</a>
+{% endblock %}
