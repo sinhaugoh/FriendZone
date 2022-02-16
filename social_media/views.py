@@ -1,7 +1,10 @@
+from django.urls import reverse
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.contrib.auth import login, authenticate, logout
 from django.views.decorators.cache import never_cache
+
+from .models import AppUser
 
 from .forms import RegistrationForm, LoginForm
 
@@ -10,12 +13,14 @@ def index(request):
     user = request.user
     
     if user.is_authenticated:
+        # authenticated
         return render(request, 'social_media/index.html')
     else:
+        # not authenticated
         return redirect('login')
     
 @never_cache
-def user_login(request):
+def user_login(request, *args, **kwargs):
     user = request.user
     
     if user.is_authenticated:
@@ -79,6 +84,33 @@ def profile(request, id):
     user = request.user
     
     if user.is_authenticated:
-        print(user.id)
+        # authenticated
+        # get the requested user
+        requested_user = None
+        try:
+            requested_user = AppUser.objects.get(id=id)
+        except AppUser.DoesNotExist:
+            # requested user does not exist
+            raise Http404('This page is not available')
         
-    return render(request, 'social_media/profile.html')
+        context = {}
+            
+        if request.method == 'POST':
+            pass
+        else:
+            context['username'] = requested_user.username
+            context['email'] = requested_user.email
+            context['profile_image_url'] = requested_user.profile_image.url
+
+            if user.id == requested_user.id:
+                # if the user accessing own profile
+                context['is_own_profile'] = True
+            else:
+                # if the user accessing other profile
+                context['is_own_profile'] = False
+    else:
+        # not authenticated
+        # TODO: can be changed so that people that are not authenticated can view certain info
+        return redirect('login')
+        
+    return render(request, 'social_media/profile.html', context)

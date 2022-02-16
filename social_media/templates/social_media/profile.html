@@ -1,5 +1,9 @@
 {% extends 'social_media/base.html' %}
 
 {% block content %}
-
+<h1>Profile</h1>
+<p>Username: {{ username }}</p>
+<p>Email: {{ email }}</p>
+<p>Profile picture: <img src="{{ profile_image_url }}" alt="profile picture"></p>
+<p>Is own profile = {{ is_own_profile }}</p>
 {% endblock %}
