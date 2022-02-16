@@ -1,6 +1,6 @@
 from django.urls import reverse
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, Http404
+from django.http import Http404
 from django.contrib.auth import login, authenticate, logout
 from django.views.decorators.cache import never_cache
 
@@ -20,7 +20,7 @@ def index(request):
         return redirect('login')
     
 @never_cache
-def user_login(request, *args, **kwargs):
+def user_login(request):
     user = request.user
     
     if user.is_authenticated:
