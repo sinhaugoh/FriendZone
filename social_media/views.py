@@ -26,8 +26,6 @@ def register(request):
         
         if registration_form.is_valid():
             new_user = registration_form.save()
-            new_user.set_password(new_user.password)
-            new_user.save()
             
             # login the new user
             login(request, new_user)
