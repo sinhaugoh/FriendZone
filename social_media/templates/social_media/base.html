@@ -1,19 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Social Zone</title>
 </head>
+
+
 <body>
     {% if request.user.is_authenticated %}
-    <a href="{% url 'index' %}">Home</a>
-    <a href="{% url 'profile' id=request.user.id %}">Profile</a>
-    <a href="{% url 'logout' %}">Log out</a>
+        <form onsubmit="return runSearchQuery();">
+            <input type="text" id="search_bar">
+            <input type="submit" value="submit">
+        </form>
+        <a href="{% url 'index' %}">Home</a>
+        <a href="{% url 'profile' id=request.user.id %}">Profile</a>
+        <a href="{% url 'logout' %}">Log out</a>
     {% endif %}
 
     {% block content %}
     {% endblock %}
 </body>
+
+<script type="text/javascript">
+    function runSearchQuery() {
+        // alert('gg');
+        let input = document.getElementById("search_bar").value;
+        window.location.replace("{% url 'search' %}?query=" + input);
+        
+        return false;
+    }
+</script>
+
 </html>

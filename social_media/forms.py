@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth import authenticate
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm
 
 from .models import AppUser
 
@@ -58,38 +58,41 @@ class LoginForm(forms.ModelForm):
                 raise forms.ValidationError("Incorrect email or password. Please try again")
             
         return self.cleaned_data
-
-    # email = forms.EmailField(max_length=256, required=True)     
     
-    # class Meta:
-    #     model = AppUser
-    #     fields = ('email', 'password')
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = AppUser
+        fields = ('profile_image', 'email', 'username')
         
-    # def clean_email(self):
-    #     # convert input email to lowercase
-    #     email = self.cleaned_data['email'].lower()
-    
-    #     try:
-    #         # try to retrieve a database instance with the same input
-    #         # if exist, raise error, else return lower case version of the input
-    #         AppUser.objects.get(email=email)
-    #         raise forms.ValidationError('Email is already in use.')
-    #     except AppUser.DoesNotExist:
-    #         return email
-    # def clean(self):
-    #     # get email and password
-    #     email = self.cleaned_data.get('email')
-    #     password = self.cleaned_data.get('password')
+    def clean_email(self):
+        # convert input email to lowercase
+        email = self.cleaned_data['email'].lower()
         
-    #     if email and password:
-    #         self.user_cache = authenticate(email=email, password=password)
-    #         if self.user_cache is None:
-    #             # if email or password is not valid
-    #             raise forms.ValidationError('Incorrect email of password. Please try again.')
-    #         elif not self.user_cache.is_active:
-    #             raise forms.ValidationError('This account is inactive')
+        try:
+            # try to retrieve a database instance with the same input
+            # if exist, raise error, else return lower case version of the input
+            AppUser.objects.exclude(pk=self.instance.pk).get(email=email)
+            raise forms.ValidationError('Email is already in use.')
+        except AppUser.DoesNotExist:
+            return email
         
-    #     # check if cookie is enabled in the web browser
-    #     self.check_for_test_cookie()
+    def clean_username(self):
+        # convert input username to lowercase
+        username = self.cleaned_data['username'].lower()
         
-    #     return self.cleaned_data
+        try:
+            # try to retrieve a database instance with the same input
+            # if exist, raise error, else return lower case version of the input
+            AppUser.objects.exclude(pk=self.instance.pk).get(username=username)
+            raise forms.ValidationError('Username already in use.')
+        except AppUser.DoesNotExist:
+            return username
+        
+    # def save(self, commit=True):
+    #     app_user = super(ProfileUpdateForm, self).save(commit=False)
+    #     print(self.cleaned_data['profile_image'])
+    #     app_user.profile_image = self.cleaned_data['profile_image']
+    #     if commit:
+    #         app_user.save()
+            
+    #     return app_user

@@ -1,0 +1,12 @@
+{% extends 'social_media/base.html' %}
+
+{% block content %}
+<h1>Search result</h1>
+{% for user_id, username, is_friend, is_own in user_results %}
+<ul>
+    <li><a href="{% url 'profile' id=user_id %}">{{ username }}</a></li>
+    <li>Is friend: {{ is_friend }}</li>
+    <li>Is own: {{ is_own }}</li>
+</ul>
+{% endfor %}
+{% endblock %}
