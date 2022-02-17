@@ -17,6 +17,7 @@
         </form>
         <a href="{% url 'index' %}">Home</a>
         <a href="{% url 'profile' id=request.user.id %}">Profile</a>
+        <a href="{% url 'password_change' %}">Change password</a>
         <a href="{% url 'logout' %}">Log out</a>
     {% endif %}
 

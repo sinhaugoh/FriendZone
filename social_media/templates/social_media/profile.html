@@ -7,6 +7,6 @@
     <p>Profile picture: <img src="{{ profile_image_url }}" alt="profile picture"></p>
     <p>Is own profile = {{ is_own_profile }}</p>
     {% if is_own_profile %}
-        <a href="{% url 'update_profile' %}"> Update profile</a>     
+        <a href="{% url 'profile_update' %}"> Update profile</a>     
     {% endif %}
 {% endblock %}

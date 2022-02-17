@@ -1,6 +1,7 @@
 from unicodedata import name
 from django.urls import path
-from .views import index, register, user_login, user_logout, profile, search_user, update_profile
+from django.contrib.auth.views import PasswordChangeView
+from .views import index, register, user_login, user_logout, profile, search_user, profile_update, password_change
 
 urlpatterns = [
     path('', index, name='index'),
@@ -9,5 +10,6 @@ urlpatterns = [
     path('logout/', user_logout, name='logout'),
     path('profile/<int:id>', profile, name='profile'),
     path('search/', search_user, name='search'),
-    path('profile/update/', update_profile, name='update_profile'),
+    path('password_change/', password_change, name='password_change'),
+    path('profile/update/', profile_update, name='profile_update'),
 ]

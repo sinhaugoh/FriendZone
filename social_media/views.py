@@ -1,11 +1,9 @@
-import os
-from django.conf import settings
-from django.urls import reverse
 from django.shortcuts import render, redirect
 from django.http import Http404, HttpResponse
-from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.views.decorators.cache import never_cache
 from django.db.models import Q
+from django.contrib.auth.forms import PasswordChangeForm
 
 from .models import DEFAULT_PROFILE_IMAGE_PATH, AppUser
 
@@ -80,6 +78,26 @@ def register(request):
     return render(request, 'social_media/user_registration.html', {
         'registration_form': registration_form
     })
+    
+def password_change(request):
+    app_user = request.user
+
+    if app_user.is_authenticated:
+        if request.method == 'POST':
+            password_change_form = PasswordChangeForm(data=request.POST, user=app_user)   
+            
+            if password_change_form.is_valid():
+                password_change_form.save()
+                update_session_auth_hash(request, password_change_form.user)
+                
+                return redirect('index')
+        else:
+            password_change_form = PasswordChangeForm(user=app_user)   
+            
+        return render(request, 'social_media/change_password.html', {'password_change_form': password_change_form})
+    else:
+        # not authenticated
+        return redirect('login')
 
 
 def user_logout(request):
@@ -152,7 +170,7 @@ def search_user(request):
         return redirect('login')
 
 
-def update_profile(request):
+def profile_update(request):
     app_user = request.user
 
     if app_user.is_authenticated:
