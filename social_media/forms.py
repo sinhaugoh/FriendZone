@@ -87,12 +87,3 @@ class ProfileUpdateForm(forms.ModelForm):
             raise forms.ValidationError('Username already in use.')
         except AppUser.DoesNotExist:
             return username
-        
-    # def save(self, commit=True):
-    #     app_user = super(ProfileUpdateForm, self).save(commit=False)
-    #     print(self.cleaned_data['profile_image'])
-    #     app_user.profile_image = self.cleaned_data['profile_image']
-    #     if commit:
-    #         app_user.save()
-            
-    #     return app_user

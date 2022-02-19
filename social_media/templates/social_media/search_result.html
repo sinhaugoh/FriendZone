@@ -2,11 +2,30 @@
 
 {% block content %}
 <h1>Search result</h1>
-{% for user_id, username, is_friend, is_own in user_results %}
+{% for user in user_results %}
 <ul>
-    <li><a href="{% url 'profile' id=user_id %}">{{ username }}</a></li>
-    <li>Is friend: {{ is_friend }}</li>
-    <li>Is own: {{ is_own }}</li>
+    <img src="{{ user.profile_image_url }}" alt="profile image">
+    <li><a href="{% url 'profile' id=user.id %}">{{ user.username }}</a></li>
+    <li>Is friend: {{ user.is_friend }}</li>
+    <li>Is own: {{ user.is_own }}</li>
+    <li>Relation type: {{ user.relation_type }}</li>
+
+    {% if not user.is_own %}
+        {% if user.is_friend %}
+        <!-- Action: remove friend -->
+            <button>Remove friend</button>         
+        {% else %}
+        <!-- Action: add friend, accept/decline friend request, cancel friend request -->
+            {% if user.relation_type == 'not_friend' %}
+                <button>Add friend</button>
+            {% elif user.relation_type == 'sender' %}
+                <button>Cancel friend request</button>
+            {% elif user.relation_type == 'receiver' %}
+                <button>Accept friend request</button>
+                <button>Decline friend request</button>
+            {% endif %}
+        {% endif %}
+    {% endif %}
 </ul>
 {% endfor %}
 {% endblock %}

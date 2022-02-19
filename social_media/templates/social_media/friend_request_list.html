@@ -1,0 +1,9 @@
+{% extends 'social_media/base.html' %}
+
+{% block content %}
+    <h1>Friend requests</h1>
+    {% for friend_request in friend_requests %}
+        <img src="{{ friend_request.profile_image_url }}" alt="profile image">
+        <a href="{% url 'profile' id=friend_request.id %}">{{ friend_request.username }}</a>
+    {% endfor %}
+{% endblock %}

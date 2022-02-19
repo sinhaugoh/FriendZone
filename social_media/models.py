@@ -58,3 +58,20 @@ class AppUser(AbstractUser):
 
     objects = AppUserManager()
     
+    
+RELATION_TYPE = (
+    ('pending_user1_user2', 'pending_user1_user2'),
+    ('pending_user2_user1','pending_user2_user1'),
+    ('friends', 'friends'),
+)
+class UserRelationship(models.Model):
+    # user1 id is always smaller than user2 id
+    user1 = models.ForeignKey(AppUser, on_delete=models.CASCADE, related_name='user1')
+    user2 = models.ForeignKey(AppUser, on_delete=models.CASCADE, related_name='user2')
+    relation_type = models.CharField(max_length=50, choices=RELATION_TYPE, blank=False, null=False)
+
+    class Meta:
+        unique_together = ('user1', 'user2')
+        
+    def __str__(self):
+        return '{} -- {}  type: {}'.format(self.user1.username, self.user2.username, self.relation_type)

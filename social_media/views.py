@@ -5,7 +5,7 @@ from django.views.decorators.cache import never_cache
 from django.db.models import Q
 from django.contrib.auth.forms import PasswordChangeForm
 
-from .models import DEFAULT_PROFILE_IMAGE_PATH, AppUser
+from .models import AppUser, UserRelationship
 
 from .forms import RegistrationForm, LoginForm, ProfileUpdateForm
 
@@ -78,22 +78,24 @@ def register(request):
     return render(request, 'social_media/user_registration.html', {
         'registration_form': registration_form
     })
-    
+
+
 def password_change(request):
     app_user = request.user
 
     if app_user.is_authenticated:
         if request.method == 'POST':
-            password_change_form = PasswordChangeForm(data=request.POST, user=app_user)   
-            
+            password_change_form = PasswordChangeForm(
+                data=request.POST, user=app_user)
+
             if password_change_form.is_valid():
                 password_change_form.save()
                 update_session_auth_hash(request, password_change_form.user)
-                
+
                 return redirect('index')
         else:
-            password_change_form = PasswordChangeForm(user=app_user)   
-            
+            password_change_form = PasswordChangeForm(user=app_user)
+
         return render(request, 'social_media/change_password.html', {'password_change_form': password_change_form})
     else:
         # not authenticated
@@ -115,25 +117,45 @@ def profile(request, id):
         requested_user = None
         try:
             requested_user = AppUser.objects.get(pk=id)
+
         except AppUser.DoesNotExist:
             # requested user does not exist
             raise Http404('This page is not available')
 
         context = {}
 
-        if request.method == 'POST':
-            pass
-        else:
-            context['username'] = requested_user.username
-            context['email'] = requested_user.email
-            context['profile_image_url'] = requested_user.profile_image.url
+        # check if the user is accessing own profile
+        is_own_profile = app_user.pk == requested_user.pk
 
-            if app_user.id == requested_user.id:
-                # if the user accessing own profile
-                context['is_own_profile'] = True
+        context['id'] = requested_user.pk
+        context['username'] = requested_user.username
+        context['email'] = requested_user.email
+        context['profile_image_url'] = requested_user.profile_image.url
+        context['is_own_profile'] = is_own_profile
+
+        try:
+            relationship = None
+            # make sure user1 id is less then user2 id before query
+            if app_user.pk < requested_user.pk:
+                relationship = UserRelationship.objects.get(
+                    user1=app_user.pk, user2=requested_user.pk)
+
+                context['relation_type'] = 'sender' if relationship.relation_type == 'pending_user1_user2' else 'receiver'
             else:
-                # if the user accessing other profile
-                context['is_own_profile'] = False
+                relationship = UserRelationship.objects.get(
+                    user1=requested_user.pk, user2=app_user.pk)
+
+                context['relation_type'] = 'sender' if relationship.relation_type == 'pending_user2_user1' else 'receiver'
+
+            context['is_friend'] = relationship.relation_type == 'friends'
+            # overwrite relation_type to 'friends' if they are friends
+            if context['is_friend']:
+                context['relation_type'] = 'friends'
+
+        except UserRelationship.DoesNotExist:
+            # if no UserRelationship record found, means they are not friend
+            context['is_friend'] = False
+            context['relation_type'] = 'not_friend'
 
         return render(request, 'social_media/profile.html', context)
     else:
@@ -158,9 +180,37 @@ def search_user(request):
                     Q(email__icontains=search_input) | Q(username__icontains=search_input))
 
                 for user in user_results:
-                    # user id, username, is_friend, is_own
-                    results.append(
-                        (user.id, user.username, False, user.id == app_user.id))
+                    temp_dict = {
+                        'id': user.id,
+                        'profile_image_url': user.profile_image.url,
+                        'username': user.username,
+                        'is_own': app_user.pk == user.pk,
+                    }
+                    try:
+                        relationship = None
+                        if app_user.pk < user.pk:
+                            # get UserRelationship where user1 is app_user and user2 is user
+                            relationship = UserRelationship.objects.get(
+                                user1=app_user, user2=user)
+                            temp_dict['relation_type'] = 'sender' if relationship.relation_type == 'pending_user1_user2' else 'receiver'
+                        else:
+                            # get UserRelationship where user1 is user and user2 is app_user
+                            relationship = UserRelationship.objects.get(
+                                user1=user, user2=app_user)
+                            temp_dict['relation_type'] = 'sender' if relationship.relation_type == 'pending_user2_user1' else 'receiver'
+
+                        temp_dict['is_friend'] = relationship.relation_type == 'friends'
+                        # overwrite relation_type to 'friends' if they are friends
+                        if temp_dict['is_friend']:
+                            temp_dict['relation_type'] = 'friends'
+
+                    except UserRelationship.DoesNotExist:
+                        # if no relationship (not friend)
+                        temp_dict['is_friend'] = False
+                        temp_dict['relation_type'] = 'not_friend'
+
+                    # append the result at the end of the loop
+                    results.append(temp_dict)
 
                 context['user_results'] = results
 
@@ -179,24 +229,88 @@ def profile_update(request):
             user = AppUser.objects.get(pk=app_user.pk)
         except AppUser.DoesNotExist:
             return HttpResponse('Something gone wrong. Please try again.')
-        
+
         if request.method == 'POST':
             profile_update_form = ProfileUpdateForm(
                 request.POST, request.FILES, instance=user)
 
             if profile_update_form.is_valid():
-                # # remove old profile image
-                # old_image_path = user.profile_image.path
-                # if os.path.exists(old_image_path):
-                #     os.remove(old_image_path)
-
                 profile_update_form.save()
 
                 return redirect('profile', id=app_user.id)
         else:
-            profile_update_form = ProfileUpdateForm(request.POST or None, instance=user)
+            profile_update_form = ProfileUpdateForm(
+                request.POST or None, instance=user)
 
         return render(request, 'social_media/update_profile.html', {'profile_update_form': profile_update_form})
+    else:
+        # not authenticated
+        return redirect('login')
+
+
+def friend_list(request, id):
+    app_user = request.user
+
+    if app_user.is_authenticated:
+        requested_user = None
+        try:
+            requested_user = AppUser.objects.get(pk=id)
+        except AppUser.DoesNotExist:
+            return Http404()
+
+        friends = []
+        relationships = UserRelationship.objects.filter(
+            Q(user1=requested_user) | Q(user2=requested_user), relation_type='friends')
+
+        for relationship in relationships:
+            if requested_user.pk == relationship.user1.pk:
+                friends.append({
+                    'id': relationship.user2.pk,
+                    'profile_image_url': relationship.user2.profile_image.url,
+                    'username': relationship.user2.username,
+                })
+            else:
+                friends.append({
+                    'id': relationship.user1.pk,
+                    'profile_image_url': relationship.user1.profile_image.url,
+                    'username': relationship.user1.username,
+                })
+
+        return render(request, 'social_media/friend_list.html', {'friends': friends})
+    else:
+        # TODO: can be changed so that people that are not authenticated can view certain info
+        # not authenticated
+        return redirect('login')
+
+
+def friend_requests_list(request):
+    app_user = request.user
+
+    if app_user.is_authenticated:
+        # friend_requests = UserRelationship.objects.filter(Q(user1=app_user) | Q(user2=app_user), relation_type__startswith='pending')
+        # friend_requests = UserRelationship.objects.filter(user1=app_user, relation_type='pending_user2_user1').filter(user2=app_user, relation_type='pending_user1_user2')
+
+        # get UserRelationship where (user1=app_user AND relation_type='pending_user2_user1') OR
+        # (user2=app_user AND relation_type='pending_user2_user1')
+        relationships = UserRelationship.objects.filter((Q(user1=app_user) & Q(
+            relation_type='pending_user2_user1')) | (Q(user2=app_user) & Q(relation_type='pending_user1_user2')))
+
+        friend_requests = []
+        for relationship in relationships:
+            if app_user.pk == relationship.user1.pk:
+                friend_requests.append({
+                    'id': relationship.user2.pk,
+                    'profile_image_url': relationship.user2.profile_image.url,
+                    'username': relationship.user2.username,
+                })
+            else:
+                friend_requests.append({
+                    'id': relationship.user1.pk,
+                    'profile_image_url': relationship.user1.profile_image.url,
+                    'username': relationship.user1.username,
+                })
+
+        return render(request, 'social_media/friend_request_list.html', {'friend_requests': friend_requests})
     else:
         # not authenticated
         return redirect('login')
