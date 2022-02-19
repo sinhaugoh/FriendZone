@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    async function sendFriendRequest(id) {
+    async function cancelFriendRequest(id) {
         let data = {id: parseInt(id)};
         let options = {
             method: "POST",
@@ -9,14 +9,14 @@
             },
             body: JSON.stringify(data)
         };
-            
-        let response = await fetch("{% url 'send_friend_request' %}", options);
+
+        let response = await fetch("{% url 'cancel_friend_request' %}", options);
             
         if (response.ok) {
             response = await response.json();
 
-            if (response['response_msg'] == 'Friend request sent.') {
-                // successfully sent friend request
+            if (response['response_msg'] == 'Friend request cancelled.') {
+                // successfully cancel friend request
                 console.log('successful');
                 // refresh the page
                 location.reload();
@@ -27,6 +27,5 @@
         } else {
             alert('Some error occurred while sending friend request. Please try again.');
         }
-        
     }
 </script>

@@ -5,7 +5,7 @@
     {% for friend_request in friend_requests %}
         <img src="{{ friend_request.profile_image_url }}" alt="profile image">
         <a href="{% url 'profile' id=friend_request.id %}">{{ friend_request.username }}</a>
+        <button>Accept</button>
+        <button>Reject</button>
     {% endfor %}
-    <button>Accept</button>
-    <button>Reject</button>
 {% endblock %}

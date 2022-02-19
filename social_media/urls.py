@@ -11,7 +11,7 @@ from .views import (index,
                     friend_requests_list,
                     )
 
-from .apis import send_friend_request
+from .apis import send_friend_request, cancel_friend_request
 
 urlpatterns = [
     # views
@@ -28,4 +28,5 @@ urlpatterns = [
     
     # apis
     path('api/friend_request/', send_friend_request, name='send_friend_request'),
+    path('api/friend_request_cancel', cancel_friend_request, name='cancel_friend_request'),
 ]

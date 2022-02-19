@@ -16,11 +16,11 @@
         <!-- Action: remove friend -->
             <button>Remove friend</button>         
         {% else %}
-        <!-- Action: add friend, accept/decline friend request, cancel friend request -->
+        <!-- Action: add friend, cancel friend request, accept/decline friend request -->
             {% if relation_type == 'not_friend' %}
                 <button onclick="sendFriendRequest('{{ id }}')">Add friend</button>
             {% elif relation_type == 'sender' %}
-                <button>Cancel friend request</button>
+                <button onclick="cancelFriendRequest('{{ id }}')">Cancel friend request</button>
             {% elif relation_type == 'receiver' %}
                 <button>Accept friend request</button>
                 <button>Decline friend request</button>
@@ -31,5 +31,17 @@
 {% endblock content %}
 
 {% block javascript %}
-    {% include 'social_media/api/send_friend_request.html' %}
+    {% if not is_own_profile %}
+        {% if is_friend %}
+        <!-- Action: remove friend -->
+        {% else %}
+        <!-- Action: add friend, cancel friend request, accept/decline friend request -->
+            {% if relation_type == 'not_friend' %}
+                {% include 'social_media/api/send_friend_request.html' %}
+            {% elif relation_type == 'sender' %}
+                {% include 'social_media/api/cancel_friend_request.html' %}
+            {% elif relation_type == 'receiver' %}
+            {% endif %}
+        {% endif %}
+    {% endif %}
 {% endblock javascript %}
