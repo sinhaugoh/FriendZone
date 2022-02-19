@@ -75,3 +75,9 @@ class UserRelationship(models.Model):
         
     def __str__(self):
         return '{} -- {}  type: {}'.format(self.user1.username, self.user2.username, self.relation_type)
+
+    def accept_friend_request(self):
+        self.relation_type = 'friends'
+        self.save()
+        
+     

@@ -5,7 +5,12 @@
     {% for friend_request in friend_requests %}
         <img src="{{ friend_request.profile_image_url }}" alt="profile image">
         <a href="{% url 'profile' id=friend_request.id %}">{{ friend_request.username }}</a>
-        <button>Accept</button>
-        <button>Reject</button>
+        <button onclick="acceptFriendRequest('{{ friend_request.id }}')">Accept</button>
+        <button onclick="declineFriendRequest('{{ friend_request.id }}')">Decline</button>
     {% endfor %}
+{% endblock %}
+
+{% block javascript %}
+    {% include 'social_media/api/accept_friend_request.html' %}
+    {% include 'social_media/api/decline_friend_request.html' %}
 {% endblock %}

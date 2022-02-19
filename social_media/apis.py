@@ -28,7 +28,7 @@ def send_friend_request(request):
         payload = {}
         
         if requested_user_id:
-            # check if AppUser with the requested_user_id exist
+            # check if the requested_user exist
             requested_user = None
             try:
                 # exclude the app_user because app_user cannot be the requested_user
@@ -67,7 +67,7 @@ def cancel_friend_request(request):
         requested_user_id = data.get('id', None)
         
         if requested_user_id:
-            # check if AppUser with the requested_user_id exist
+            # check if the requested_user exist
             requested_user = None
             try:
                 # exclude the app_user because app_user cannot be the requested_user
@@ -80,13 +80,122 @@ def cancel_friend_request(request):
             user1, user2 = determine_user1_and_user2_in_user_relationship(app_user, requested_user)
             
             try:
-                # if found, delete the relationship
+                # if the relationship is valid (current user is the friend request sender)
                 relationship = UserRelationship.objects.get(user1=user1, user2=user2, relation_type='pending_user1_user2' if app_user.pk == user1.pk else 'pending_user2_user1')
                 relationship.delete()
                 
                 payload['response_msg'] = 'Friend request cancelled.'
             except UserRelationship.DoesNotExist:
-                # if not found, invalid request
+                # if the relationship is not found
+                payload['response_msg'] = 'Invalid request.'
+    else:
+        # not authenticated
+        payload['response_msg'] = 'You are not authenticated.'
+        
+    return HttpResponse(json.dumps(payload), content_type='application/json')
+
+def accept_friend_request(request):
+    app_user = request.user
+    payload = {}
+    
+    if app_user.is_authenticated and request.method == 'POST':
+        data = json.loads(request.body)
+        requested_user_id = data.get('id', None)
+        
+        if requested_user_id:
+            # check if the requested_user exist
+            requested_user = None
+            try:
+                # exclude the app_user because app_user cannot be the requested_user
+                requested_user = AppUser.objects.exclude(pk=app_user.pk).get(pk=requested_user_id)
+            except AppUser.DoesNotExist:
+                # invalid requested_user_id
+                payload['response_msg'] = 'Invalid request id.'
+                return HttpResponse(json.dumps(payload), content_type='application/json')
+
+            user1, user2 = determine_user1_and_user2_in_user_relationship(app_user, requested_user)
+            
+            try:
+                # if the relationship is valid (current user is the friend request receiver)
+                relationship = UserRelationship.objects.get(user1=user1, user2=user2, relation_type='pending_user2_user1' if app_user.pk == user1.pk else 'pending_user1_user2')
+                # accept the friend request
+                relationship.accept_friend_request()
+                
+                payload['response_msg'] = 'Friend request accepted.'
+            except UserRelationship.DoesNotExist:
+                # if the relationship is not found
+                payload['response_msg'] = 'Invalid request.'
+    else:
+        # not authenticated
+        payload['response_msg'] = 'You are not authenticated.'
+        
+    return HttpResponse(json.dumps(payload), content_type='application/json')
+
+def decline_friend_request(request):
+    app_user = request.user
+    payload = {}
+    
+    if app_user.is_authenticated and request.method == 'POST':
+        data = json.loads(request.body)
+        requested_user_id = data.get('id', None)
+        
+        if requested_user_id:
+            # check if the requested_user exist
+            requested_user = None
+            try:
+                # exclude the app_user because app_user cannot be the requested_user
+                requested_user = AppUser.objects.exclude(pk=app_user.pk).get(pk=requested_user_id)
+            except AppUser.DoesNotExist:
+                # invalid requested_user_id
+                payload['response_msg'] = 'Invalid request id.'
+                return HttpResponse(json.dumps(payload), content_type='application/json')
+
+            user1, user2 = determine_user1_and_user2_in_user_relationship(app_user, requested_user)
+            
+            try:
+                # if the relationship is valid (current user is the friend request receiver)
+                relationship = UserRelationship.objects.get(user1=user1, user2=user2, relation_type='pending_user2_user1' if app_user.pk == user1.pk else 'pending_user1_user2')
+                relationship.delete()
+                
+                payload['response_msg'] = 'Friend request declined.'
+            except UserRelationship.DoesNotExist:
+                # if the relationship is not found
+                payload['response_msg'] = 'Invalid request.'
+    else:
+        # not authenticated
+        payload['response_msg'] = 'You are not authenticated.'
+        
+    return HttpResponse(json.dumps(payload), content_type='application/json')
+
+def remove_friend(request):
+    app_user = request.user
+    payload = {}
+    
+    if app_user.is_authenticated and request.method == 'POST':
+        data = json.loads(request.body)
+        requested_user_id = data.get('id', None)
+        
+        if requested_user_id:
+            # check if the requested_user exist
+            requested_user = None
+            try:
+                # exclude the app_user because app_user cannot be the requested_user
+                requested_user = AppUser.objects.exclude(pk=app_user.pk).get(pk=requested_user_id)
+            except AppUser.DoesNotExist:
+                # invalid requested_user_id
+                payload['response_msg'] = 'Invalid request id.'
+                return HttpResponse(json.dumps(payload), content_type='application/json')
+
+            user1, user2 = determine_user1_and_user2_in_user_relationship(app_user, requested_user)
+            
+            try:
+                # if the relationship is valid (current user and requested user are friends)
+                relationship = UserRelationship.objects.get(user1=user1, user2=user2,relation_type='friends')
+                relationship.delete()
+                
+                payload['response_msg'] = 'Friend removed.'
+            except UserRelationship.DoesNotExist:
+                # if the relationship is not found
                 payload['response_msg'] = 'Invalid request.'
     else:
         # not authenticated

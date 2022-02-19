@@ -258,6 +258,7 @@ def friend_list(request, id):
         except AppUser.DoesNotExist:
             return Http404()
 
+        context = {}
         friends = []
         relationships = UserRelationship.objects.filter(
             Q(user1=requested_user) | Q(user2=requested_user), relation_type='friends')
@@ -276,7 +277,9 @@ def friend_list(request, id):
                     'username': relationship.user1.username,
                 })
 
-        return render(request, 'social_media/friend_list.html', {'friends': friends})
+        context['friends'] = friends
+        context['is_own'] = app_user.pk == requested_user.pk
+        return render(request, 'social_media/friend_list.html', context)
     else:
         # TODO: can be changed so that people that are not authenticated can view certain info
         # not authenticated

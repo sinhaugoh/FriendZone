@@ -2,8 +2,22 @@
 
 {% block content %}
 <h1>Friend list</h1>
-    {% for friend in friends %}
-        <img src="{{ friend.profile_image_url }}" alt="profile image">
-        <p>{{ friend.username }}</p>
-    {% endfor %}
+    {% if is_own %}
+        {% for friend in friends %}
+            <img src="{{ friend.profile_image_url }}" alt="profile image">
+            <p>{{ friend.username }}</p>
+            <button onclick="removeFriend('{{ friend.id }}')">Remove friend</button>
+        {% endfor %}
+    {% else %}
+        {% for friend in friends %}
+            <img src="{{ friend.profile_image_url }}" alt="profile image">
+            <p>{{ friend.username }}</p>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
+{% block javascript %}
+    {% if is_own %}
+        {% include 'social_media/api/remove_friend.html' %}
+    {% endif %}
 {% endblock %}
