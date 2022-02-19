@@ -8,6 +8,7 @@
     <p>Is own profile = {{ is_own_profile }}</p>
     {% if is_own_profile %}
         <a href="{% url 'profile_update' %}"> Update profile</a>     
+        <a href="{% url 'friend_requests' %}">Friend requests</a>
     {% endif %}
 
     {% if not is_own_profile %}
@@ -17,7 +18,7 @@
         {% else %}
         <!-- Action: add friend, accept/decline friend request, cancel friend request -->
             {% if relation_type == 'not_friend' %}
-                <button>Add friend</button>
+                <button onclick="sendFriendRequest('{{ id }}')">Add friend</button>
             {% elif relation_type == 'sender' %}
                 <button>Cancel friend request</button>
             {% elif relation_type == 'receiver' %}
@@ -27,5 +28,8 @@
         {% endif %}
     {% endif %}
     <a href="{% url 'friend_list' id=id %}">Friend list</a>
-    
-{% endblock %}
+{% endblock content %}
+
+{% block javascript %}
+    {% include 'social_media/api/send_friend_request.html' %}
+{% endblock javascript %}

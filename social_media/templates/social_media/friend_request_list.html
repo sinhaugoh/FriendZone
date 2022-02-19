@@ -6,4 +6,6 @@
         <img src="{{ friend_request.profile_image_url }}" alt="profile image">
         <a href="{% url 'profile' id=friend_request.id %}">{{ friend_request.username }}</a>
     {% endfor %}
+    <button>Accept</button>
+    <button>Reject</button>
 {% endblock %}

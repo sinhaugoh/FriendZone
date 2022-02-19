@@ -1,0 +1,33 @@
+<script type="text/javascript">
+    async function sendFriendRequest(id) {
+        console.log(id)
+        let data = {id: parseInt(id)};
+        let options = {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        };
+            
+        let response = await fetch("{% url 'send_friend_request' %}", options);
+            
+        if (response.ok) {
+            response = await response.json();
+
+            if (response['response_msg'] == 'Friend request sent.') {
+                // successfully sent friend request
+                console.log('successful');
+                // refresh the page
+                location.reload();
+            } else {
+                alert(response['response_msg']);
+            }
+
+        } else {
+            alert('Some error occurred while sending friend request. Please try again.');
+        }
+        
+    }
+</script>
