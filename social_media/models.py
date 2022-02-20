@@ -69,6 +69,7 @@ class UserRelationship(models.Model):
     user1 = models.ForeignKey(AppUser, on_delete=models.CASCADE, related_name='user1')
     user2 = models.ForeignKey(AppUser, on_delete=models.CASCADE, related_name='user2')
     relation_type = models.CharField(max_length=50, choices=RELATION_TYPE, blank=False, null=False)
+    date_modified = models.DateTimeField( auto_now=True)
 
     class Meta:
         unique_together = ('user1', 'user2')
