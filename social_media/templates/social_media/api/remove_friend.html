@@ -10,6 +10,14 @@
             body: JSON.stringify(data)
         };
 
+        let relationshipActionsDiv = document.getElementById(`relationship-action-${id}`);
+
+        // disable all buttons in relationship action div 
+        let buttons = relationshipActionsDiv.querySelectorAll("button");
+        for (let i = 0; i < buttons.length; i++) {
+            buttons[i].setAttribute("disabled", "disabled");
+        }
+
         let response = await fetch("{% url 'remove_friend' %}", options);
             
         if (response.ok) {
@@ -17,9 +25,25 @@
 
             if (response['response_msg'] == 'Friend removed.') {
                 // successfully removed friend
-                console.log('successful');
-                // refresh the page
-                location.reload();
+                // check if the relationship is in a list (friendlist, friend request list)
+                if (document.getElementById('list-of-relationships') != null) {
+                    // if in a list, remove the component from the list
+                    document.getElementById(id).remove();
+                } else {
+                    // remove all children
+                    while(relationshipActionsDiv.firstChild) {
+                        relationshipActionsDiv.removeChild(relationshipActionsDiv.firstChild);
+                    }
+                    
+                    // create send friend request button
+                    let sendFriendRequestButton = document.createElement('button');
+                    sendFriendRequestButton.setAttribute("onClick", `sendFriendRequest(${id})`);
+                    sendFriendRequestButton.textContent = 'Send friend request';
+                    
+                    // add the button into relationship action div
+                    relationshipActionsDiv.appendChild(sendFriendRequestButton);
+                }
+
             } else {
                 alert(response['response_msg']);
             }
