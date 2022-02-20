@@ -2,4 +2,15 @@
 
 {% block content %}
 <h1>Home page</h1>
+<div id="image-div">
+    <img src="#" id="post-image-preview">
+    <input type="file" name="image" accept="image/*" id="id_image" onchange="document.getElementById('post-image-preview').src = window.URL.createObjectURL(this.files[0])"><br>
+</div>
+<textarea name="text" id="id_text" cols="30" rows="10" maxlength="500" placeholder="How are you feeling today..."></textarea><br>
+<div id="post-errors-div"></div>
+<button onclick="create_post()">Post</button>
+{% endblock %}
+
+{% block javascript %}
+    {% include 'social_media/api/create_post.html' %}
 {% endblock %}

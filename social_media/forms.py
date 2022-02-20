@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm
 
-from .models import AppUser
+from .models import AppUser, Post
 
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(max_length=256, required=True)
@@ -87,3 +87,17 @@ class ProfileUpdateForm(forms.ModelForm):
             raise forms.ValidationError('Username already in use.')
         except AppUser.DoesNotExist:
             return username
+        
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ('image', 'text')
+        
+    def clean(self):
+        if self.is_valid():
+            image = self.cleaned_data['image']
+            text = self.cleaned_data['text']
+            if image is None and text is None:
+                raise forms.ValidationError('You must at least provide an image or status text')
+        
+        return self.cleaned_data 

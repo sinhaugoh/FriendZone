@@ -1,0 +1,41 @@
+<script type="text/javascript">
+    async function create_post() {
+        let image = document.getElementById('id_image');
+        let text = document.getElementById('id_text');
+
+        let data = new FormData();
+        data.append('image', image.files[0]);
+        data.append('text', text.value);
+
+        let options = {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+            },
+            body: data
+        };
+
+        //let relationshipActionsDiv = document.getElementById(`relationship-action-${id}`);
+
+        // disable all buttons in relationship action div 
+        //let buttons = relationshipActionsDiv.querySelectorAll("button");
+        //for (let i = 0; i < buttons.length; i++) {
+        //buttons[i].setAttribute("disabled", "disabled");
+        //}
+
+        let response = await fetch("{% url 'create_post' %}", options);
+
+        if (response.ok) {
+            response = await response.json();
+            // TODO: implement this
+        } else if (response.status == 400) {
+            response = await response.json();
+            let postErrorDiv = document.getElementById('post-errors-div');
+            for (let i = 0; i < response['response_msg']['__all__'].length; i++) {
+                let error = document.createElement("p");
+                error.innerText = response['response_msg']['__all__'][i];
+                postErrorDiv.appendChild(error)
+            }
+        }
+    }
+</script>

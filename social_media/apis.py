@@ -1,7 +1,8 @@
-from django.http import HttpResponse
+from django.http import JsonResponse
 import json
 
 from .models import UserRelationship, AppUser
+from .forms import PostForm
 
 
 def determine_user1_and_user2_in_user_relationship(user1, user2):
@@ -36,7 +37,7 @@ def send_friend_request(request):
             except AppUser.DoesNotExist:
                 # invalid requested_user_id
                 payload['response_msg'] = 'Invalid request id.'
-                return HttpResponse(json.dumps(payload), content_type='application/json')
+                return JsonResponse(payload)
 
             # determine user1 and user2 in UserRelationship
             user1, user2 = determine_user1_and_user2_in_user_relationship(
@@ -56,7 +57,7 @@ def send_friend_request(request):
         # not authenticated
         payload['response_msg'] = 'You are not authenticated.'
 
-    return HttpResponse(json.dumps(payload), content_type='application/json')
+    return JsonResponse(payload)
 
 def cancel_friend_request(request):
     app_user = request.user
@@ -75,7 +76,7 @@ def cancel_friend_request(request):
             except AppUser.DoesNotExist:
                 # invalid requested_user_id
                 payload['response_msg'] = 'Invalid request id.'
-                return HttpResponse(json.dumps(payload), content_type='application/json')
+                return JsonResponse(payload)
 
             user1, user2 = determine_user1_and_user2_in_user_relationship(app_user, requested_user)
             
@@ -92,7 +93,7 @@ def cancel_friend_request(request):
         # not authenticated
         payload['response_msg'] = 'You are not authenticated.'
         
-    return HttpResponse(json.dumps(payload), content_type='application/json')
+    return JsonResponse(payload)
 
 def accept_friend_request(request):
     app_user = request.user
@@ -111,7 +112,7 @@ def accept_friend_request(request):
             except AppUser.DoesNotExist:
                 # invalid requested_user_id
                 payload['response_msg'] = 'Invalid request id.'
-                return HttpResponse(json.dumps(payload), content_type='application/json')
+                return JsonResponse(payload)
 
             user1, user2 = determine_user1_and_user2_in_user_relationship(app_user, requested_user)
             
@@ -129,7 +130,7 @@ def accept_friend_request(request):
         # not authenticated
         payload['response_msg'] = 'You are not authenticated.'
         
-    return HttpResponse(json.dumps(payload), content_type='application/json')
+    return JsonResponse(payload)
 
 def decline_friend_request(request):
     app_user = request.user
@@ -148,7 +149,7 @@ def decline_friend_request(request):
             except AppUser.DoesNotExist:
                 # invalid requested_user_id
                 payload['response_msg'] = 'Invalid request id.'
-                return HttpResponse(json.dumps(payload), content_type='application/json')
+                return JsonResponse(payload)
 
             user1, user2 = determine_user1_and_user2_in_user_relationship(app_user, requested_user)
             
@@ -165,7 +166,7 @@ def decline_friend_request(request):
         # not authenticated
         payload['response_msg'] = 'You are not authenticated.'
         
-    return HttpResponse(json.dumps(payload), content_type='application/json')
+    return JsonResponse(payload)
 
 def remove_friend(request):
     app_user = request.user
@@ -184,7 +185,7 @@ def remove_friend(request):
             except AppUser.DoesNotExist:
                 # invalid requested_user_id
                 payload['response_msg'] = 'Invalid request id.'
-                return HttpResponse(json.dumps(payload), content_type='application/json')
+                return JsonResponse(payload)
 
             user1, user2 = determine_user1_and_user2_in_user_relationship(app_user, requested_user)
             
@@ -201,4 +202,33 @@ def remove_friend(request):
         # not authenticated
         payload['response_msg'] = 'You are not authenticated.'
         
-    return HttpResponse(json.dumps(payload), content_type='application/json')
+    return JsonResponse(payload)
+
+def create_post(request):
+    app_user = request.user
+    payload = {}
+    
+    # check if user is authenticated
+    if not app_user.is_authenticated:
+        payload['response_msg'] = 'You are not authenticated.'
+        return JsonResponse(payload, status=401)
+        
+    # check if the request method is POST
+    if request.method != 'POST':
+        payload['response_msg'] = 'Invalid request.'
+        return JsonResponse(payload, status=400)
+    
+    
+    post_form = PostForm(request.POST, request.FILES)
+    if post_form.is_valid():
+        # create the instance if the input is valid
+        post = post_form.save(commit=False)
+        post.owner = app_user
+        post.save()
+        
+        payload['response_msg'] = 'Post created.'
+        return JsonResponse(payload, status=201)
+    else:
+        payload['response_msg'] = post_form.errors
+        return JsonResponse(payload, status=400)
+    

@@ -101,9 +101,14 @@ class Post(models.Model):
     #         )
     #     ]
     
-    def clean(self, *args, **kwargs):
-        # make sure at least image or text must exist
-        if self.image is None and self.text is None:
-            raise ValidationError('Image or text should not be empty.')
-        
-        return super().clean(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            # make instance pk retrievable when storing image
+            temp = self.image
+            self.image = None
+            super(Post, self).save(*args, **kwargs)
+            self.image = temp
+            if 'force_insert' in kwargs:
+                kwargs.pop('force_insert')
+
+        super(Post, self).save(*args, **kwargs)
