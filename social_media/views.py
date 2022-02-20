@@ -277,6 +277,9 @@ def friend_list(request, id):
                     'username': relationship.user1.username,
                 })
 
+        # sort friends by username
+        friends.sort(key=lambda x: x.get('username'))
+
         context['friends'] = friends
         context['is_own'] = app_user.pk == requested_user.pk
         return render(request, 'social_media/friend_list.html', context)
@@ -296,7 +299,7 @@ def friend_requests_list(request):
         # get UserRelationship where (user1=app_user AND relation_type='pending_user2_user1') OR
         # (user2=app_user AND relation_type='pending_user2_user1')
         relationships = UserRelationship.objects.filter((Q(user1=app_user) & Q(
-            relation_type='pending_user2_user1')) | (Q(user2=app_user) & Q(relation_type='pending_user1_user2')))
+            relation_type='pending_user2_user1')) | (Q(user2=app_user) & Q(relation_type='pending_user1_user2'))).order_by('-date_modified')
 
         friend_requests = []
         for relationship in relationships:
