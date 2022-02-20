@@ -1,14 +1,17 @@
-from pyexpat import model
 from django.db import models
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
+from django.forms import ValidationError
 from .storage import OverwriteFileStorage
 
 DEFAULT_PROFILE_IMAGE_PATH = 'images/default_images/default_profile.png'
 
 # retrieve profile image path
-def get_profile_image_path(instance, filename):
+def get_profile_image_path(instance, _):
     return 'images/profile_images/{}/profile_image.jpg'.format(str(instance.pk))
+
+def get_post_image_path(instance, _):
+    return 'images/post_images/{}/{}/post_image.jpg'.format(str(instance.owner.pk),str(instance.pk))
 
 
 class AppUserManager(BaseUserManager):
@@ -82,3 +85,25 @@ class UserRelationship(models.Model):
         self.save()
         
      
+class Post(models.Model):
+    image = models.ImageField(max_length=256, blank=True, null=True, upload_to=get_post_image_path)
+    text = models.CharField(max_length=500,blank=True, null=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey(AppUser, on_delete=models.CASCADE)
+    
+    # class Meta:
+    #     constraints = [
+    #         models.CheckConstraint(
+    #             # database check
+    #             check=models.Q(image=None, text__isnull=False) |
+    #                   models.Q(text=None, image__isnull=False),
+    #             name='Image or text should not be empty.'
+    #         )
+    #     ]
+    
+    def clean(self, *args, **kwargs):
+        # make sure at least image or text must exist
+        if self.image is None and self.text is None:
+            raise ValidationError('Image or text should not be empty.')
+        
+        return super().clean(*args, **kwargs)
