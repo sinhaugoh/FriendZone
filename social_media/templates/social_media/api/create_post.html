@@ -15,22 +15,56 @@
             body: data
         };
 
-        //let relationshipActionsDiv = document.getElementById(`relationship-action-${id}`);
 
-        // disable all buttons in relationship action div 
-        //let buttons = relationshipActionsDiv.querySelectorAll("button");
-        //for (let i = 0; i < buttons.length; i++) {
-        //buttons[i].setAttribute("disabled", "disabled");
-        //}
+        // disable post button
+        let postButton = document.getElementById('post-button');
+        postButton.setAttribute("disabled", "disabled");
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
         let response = await fetch("{% url 'create_post' %}", options);
+        // enable post button
+        postButton.removeAttribute("disabled");
+
+        // remove all post error messages
+        let postErrorDiv = document.getElementById('post-errors-div');
+        while (postErrorDiv.firstChild) {
+            postErrorDiv.removeChild(postErrorDiv.firstChild);
+        }
 
         if (response.ok) {
             response = await response.json();
-            // TODO: implement this
+            data = response['data']
+            console.log(response['data']);
+            let postsDiv = document.getElementById("posts");
+            let postDiv = document.createElement("div");
+
+            let ownerP = document.createElement("p");
+            ownerP.innerText = data['owner_username'];
+            postDiv.appendChild(ownerP);
+
+            let ownerProfileImg = document.createElement("img");
+            ownerProfileImg.setAttribute("src", data['owner_profile_image_path']);
+            postDiv.appendChild(ownerProfileImg);
+
+            if (data['post_image_path'] != null) {
+                let postImagePathImg = document.createElement("img");
+                postImagePathImg.setAttribute("src", data['post_image_path']);
+                postDiv.appendChild(postImagePathImg);
+            }
+
+            if (data['post_text'] != null) {
+                let textP = document.createElement("p");
+                textP.innerText = data['post_text'];
+                postDiv.appendChild(textP);
+            }
+
+            let dateCreatedP = document.createElement("p");
+            dateCreatedP.innerText = data['post_date_created'];
+            postDiv.appendChild(dateCreatedP);
+
+            postsDiv.prepend(postDiv);
         } else if (response.status == 400) {
             response = await response.json();
-            let postErrorDiv = document.getElementById('post-errors-div');
             for (let i = 0; i < response['response_msg']['__all__'].length; i++) {
                 let error = document.createElement("p");
                 error.innerText = response['response_msg']['__all__'][i];

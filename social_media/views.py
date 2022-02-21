@@ -5,7 +5,7 @@ from django.views.decorators.cache import never_cache
 from django.db.models import Q
 from django.contrib.auth.forms import PasswordChangeForm
 
-from .models import AppUser, UserRelationship
+from .models import AppUser, UserRelationship, Post
 
 from .forms import RegistrationForm, LoginForm, ProfileUpdateForm
 
@@ -17,7 +17,32 @@ def index(request):
 
     if app_user.is_authenticated:
         # authenticated
-        return render(request, 'social_media/index.html')
+
+        # get all friends relationships with the app_user
+        relationships = UserRelationship.objects.filter(
+            Q(user1=app_user) | Q(user2=app_user), relation_type='friends')
+        
+        # a list of users where their post will be displayed 
+        post_users = [app_user]
+        for relationship in relationships:
+            if relationship.user1.pk == app_user.pk:
+                post_users.append(relationship.user2)
+            else:
+                post_users.append(relationship.user1)
+                
+        # create a list of posts
+        posts = Post.objects.filter(owner__in = post_users).order_by('-date_created')
+        post_list = []
+        for post in posts:
+            post_list.append({
+                'owner_username': post.owner.username,
+                'owner_profile_image_path': post.owner.profile_image.url,
+                'post_text': post.text,
+                'post_image_path': None if post.image == '' else post.image.url,
+                'post_date_created': post.date_created
+            })
+
+        return render(request, 'social_media/index.html', {'posts': post_list})
     else:
         # not authenticated
         return redirect('login')

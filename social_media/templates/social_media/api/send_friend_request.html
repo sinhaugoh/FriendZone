@@ -19,8 +19,6 @@
             buttons[i].setAttribute("disabled", "disabled");
         }
 
-        // await new Promise(resolve => setTimeout(resolve, 1000));
-        
         let response = await fetch("{% url 'send_friend_request' %}", options);
             
         if (response.ok) {

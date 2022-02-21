@@ -227,6 +227,14 @@ def create_post(request):
         post.save()
         
         payload['response_msg'] = 'Post created.'
+        # return post data
+        payload['data'] = {
+            'owner_username': post.owner.username,
+            'owner_profile_image_path': post.owner.profile_image.url,
+            'post_text': post.text,
+            'post_image_path': None if post_form.cleaned_data['image'] is None else post.image.url,
+            'post_date_created': post.date_created
+        }
         return JsonResponse(payload, status=201)
     else:
         payload['response_msg'] = post_form.errors
