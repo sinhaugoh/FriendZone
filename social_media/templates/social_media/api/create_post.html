@@ -19,7 +19,7 @@
         // disable post button
         let postButton = document.getElementById('post-button');
         postButton.setAttribute("disabled", "disabled");
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        //await new Promise(resolve => setTimeout(resolve, 1000));
 
         let response = await fetch("{% url 'create_post' %}", options);
         // enable post button

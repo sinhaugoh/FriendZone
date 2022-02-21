@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 
 <head>
@@ -6,6 +7,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Social Zone</title>
+    <link rel="stylesheet" href="{% static 'foundation/css/foundation.css' %}" />
+    <link rel="stylesheet" href="{% static '/css/social_media.css' %}" />
     <script type="text/javascript">
         function runSearchQuery() {
             let input = document.getElementById("search_bar").value;
@@ -14,6 +17,10 @@
             return false;
         }
     </script>
+
+    <script src="{% static 'foundation/js/vendor/jquery.js' %}"></script>
+    <script src="{% static 'foundation/js/vendor/foundation.min.js' %}"></script>
+
     {% block javascript %}
     {% endblock javascript %}
 </head>
