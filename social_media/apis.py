@@ -1,8 +1,12 @@
 from django.http import JsonResponse
+from rest_framework.response import Response
+from rest_framework import generics
+from rest_framework import status
 import json
 
-from .models import UserRelationship, AppUser
+from .models import UserRelationship, AppUser, Post
 from .forms import PostForm
+from .serializers import PostSerializer
 
 
 def determine_user1_and_user2_in_user_relationship(user1, user2):
@@ -240,3 +244,12 @@ def create_post(request):
         payload['response_msg'] = post_form.errors
         return JsonResponse(payload, status=400)
     
+    
+###################### DRF ##################
+class UserPostList(generics.ListAPIView):
+    serializer_class = PostSerializer
+    
+    def get_queryset(self):
+        user_id = self.kwargs['id']
+        
+        return Post.objects.filter(owner__pk=user_id)

@@ -15,7 +15,8 @@ from .apis import (send_friend_request,
                    accept_friend_request, 
                    decline_friend_request, 
                    remove_friend,
-                   create_post)
+                   create_post,
+                   UserPostList)
 
 urlpatterns = [
     # views
@@ -39,5 +40,6 @@ urlpatterns = [
     path('api/friend_request_decline/', decline_friend_request,
          name='decline_friend_request'),
     path('api/friend_remove/', remove_friend, name='remove_friend'),
-    path('post/create/', create_post, name='create_post'),
+    path('api/post/create/', create_post, name='create_post'),
+    path('api/user/<int:id>/posts/', UserPostList.as_view(), name='user_posts'),
 ]

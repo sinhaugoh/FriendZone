@@ -6,30 +6,45 @@
     <p>Email: {{ email }}</p>
     <p>Profile picture: <img src="{{ profile_image_url }}" alt="profile picture"></p>
     <p>Is own profile = {{ is_own_profile }}</p>
-    {% if is_own_profile %}
-        <a href="{% url 'profile_update' %}"> Update profile</a>     
-        <a href="{% url 'friend_requests' %}">Friend requests</a>
-    {% endif %}
+    {% if is_authenticated %}
+        {% if is_own_profile %}
+            <a href="{% url 'profile_update' %}"> Update profile</a>     
+            <a href="{% url 'friend_requests' %}">Friend requests</a>
+        {% endif %}
 
-    {% if not is_own_profile %}
-    <div id="relationship-action-{{ id }}">
-        {% if is_friend %}
-        <!-- Action: remove friend -->
-            <button onclick="removeFriend('{{ id }}')">Remove friend</button>         
-        {% else %}
-        <!-- Action: add friend, cancel friend request, accept/decline friend request -->
-            {% if relation_type == 'not_friend' %}
-                <button onclick="sendFriendRequest('{{ id }}')">Send friend request</button>
-            {% elif relation_type == 'sender' %}
-                <button onclick="cancelFriendRequest('{{ id }}')">Cancel friend request</button>
-            {% elif relation_type == 'receiver' %}
-                <button onclick="acceptFriendRequest('{{ id }}')">Accept friend request</button>
-                <button onclick="declineFriendRequest('{{ id }}')">Decline friend request</button>
+        <!-- relationship action -->
+        {% if not is_own_profile %}
+        <div id="relationship-action-{{ id }}">
+            {% if is_friend %}
+            <!-- Action: remove friend -->
+                <button onclick="removeFriend('{{ id }}')">Remove friend</button>         
+            {% else %}
+            <!-- Action: add friend, cancel friend request, accept/decline friend request -->
+                {% if relation_type == 'not_friend' %}
+                    <button onclick="sendFriendRequest('{{ id }}')">Send friend request</button>
+                {% elif relation_type == 'sender' %}
+                    <button onclick="cancelFriendRequest('{{ id }}')">Cancel friend request</button>
+                {% elif relation_type == 'receiver' %}
+                    <button onclick="acceptFriendRequest('{{ id }}')">Accept friend request</button>
+                    <button onclick="declineFriendRequest('{{ id }}')">Decline friend request</button>
+                {% endif %}
             {% endif %}
         {% endif %}
+        </div>
+        <a href="{% url 'friend_list' id=id %}">Friend list</a>
+
+        <!-- posts -->
+        <h1>Posts</h1>
+        {% for post in posts %}
+            <div class="m-4 bg-white">
+            <p>{{ post.text|default_if_none:"" }}</p>
+            {% if post.image %}
+                <img src="{{ post.image }}">
+            {% endif %}
+            </div>
+        {% endfor %}
     {% endif %}
-    </div>
-    <a href="{% url 'friend_list' id=id %}">Friend list</a>
+
 {% endblock %}
 
 {% block javascript %}

@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
 from django.http import Http404, HttpResponse
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
+from django.urls import reverse
 from django.views.decorators.cache import never_cache
 from django.db.models import Q
 from django.contrib.auth.forms import PasswordChangeForm
+import requests
 
 from .models import AppUser, UserRelationship, Post
 
@@ -134,42 +136,47 @@ def user_logout(request):
 
 
 def profile(request, id):
+    # get the requested user
+    requested_user = None
+    try:
+        requested_user = AppUser.objects.get(pk=id)
+
+    except AppUser.DoesNotExist:
+        # requested user does not exist
+        raise Http404('This page is not available')
+
+    context = {}
+
+    # input profile user details
+    context['id'] = requested_user.pk
+    context['username'] = requested_user.username
+    context['email'] = requested_user.email
+    context['profile_image_url'] = requested_user.profile_image.url
+    context['is_own_profile'] = False
+    context['is_authenticated'] = False
+    
+
+    # if user is logged in
     app_user = request.user
-
     if app_user.is_authenticated:
-        # authenticated
-        # get the requested user
-        requested_user = None
-        try:
-            requested_user = AppUser.objects.get(pk=id)
+        context['is_authenticated'] = True
+        context['is_own_profile'] = app_user.pk == requested_user.pk
 
-        except AppUser.DoesNotExist:
-            # requested user does not exist
-            raise Http404('This page is not available')
-
-        context = {}
-
-        # check if the user is accessing own profile
-        is_own_profile = app_user.pk == requested_user.pk
-
-        context['id'] = requested_user.pk
-        context['username'] = requested_user.username
-        context['email'] = requested_user.email
-        context['profile_image_url'] = requested_user.profile_image.url
-        context['is_own_profile'] = is_own_profile
-
+        # fetch profile user's posts
+        response = requests.get(request.build_absolute_uri(reverse('user_posts', kwargs={'id': requested_user.pk})))
+        context['posts'] = response.json()
+        
+        # get the relationship between the logged in user and the requested user
         try:
             relationship = None
             # make sure user1 id is less then user2 id before query
             if app_user.pk < requested_user.pk:
                 relationship = UserRelationship.objects.get(
                     user1=app_user.pk, user2=requested_user.pk)
-
                 context['relation_type'] = 'sender' if relationship.relation_type == 'pending_user1_user2' else 'receiver'
             else:
                 relationship = UserRelationship.objects.get(
                     user1=requested_user.pk, user2=app_user.pk)
-
                 context['relation_type'] = 'sender' if relationship.relation_type == 'pending_user2_user1' else 'receiver'
 
             context['is_friend'] = relationship.relation_type == 'friends'
@@ -182,11 +189,7 @@ def profile(request, id):
             context['is_friend'] = False
             context['relation_type'] = 'not_friend'
 
-        return render(request, 'social_media/profile.html', context)
-    else:
-        # not authenticated
-        # TODO: can be changed so that people that are not authenticated can view certain info
-        return redirect('login')
+    return render(request, 'social_media/profile.html', context)
 
 
 def search_user(request):
