@@ -65,10 +65,13 @@
             postsDiv.prepend(postDiv);
         } else if (response.status == 400) {
             response = await response.json();
-            for (let i = 0; i < response['response_msg']['__all__'].length; i++) {
-                let error = document.createElement("p");
-                error.innerText = response['response_msg']['__all__'][i];
-                postErrorDiv.appendChild(error)
+
+            for (const key in response['response_msg']) {
+                for (let i = 0; i < response['response_msg'][key].length; i++) {
+                    let error = document.createElement("p");
+                    error.innerText = response['response_msg'][key][i];
+                    postErrorDiv.appendChild(error)
+                }
             }
         }
     }
