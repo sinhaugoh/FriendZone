@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework import generics, status, permissions
@@ -5,7 +6,7 @@ import json
 
 from .models import UserRelationship, AppUser, Post
 from .forms import PostForm
-from .serializers import PostSerializer
+from .serializers import FriendListSerializer, PostSerializer
 
 
 def determine_user1_and_user2_in_user_relationship(user1, user2):
@@ -252,4 +253,43 @@ class UserPostList(generics.ListAPIView):
     def get_queryset(self):
         username = self.kwargs['username']
         
+        return Post.objects.filter(owner__username=username)
+    
+
+############# NOT USED ######################
+
+class FriendList(generics.ListAPIView):
+    serializer_class = FriendListSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'username'
+    
+    def get_queryset(self):
+        requested_username = self.kwargs['username']
+        app_user = self.request.user
+        
+        if app_user.is_authenticated:
+            requested_user = None
+            # get the requested user
+            try:
+                requested_user = AppUser.objects.get(username=requested_username)
+            except AppUser.DoesNotExist:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+            
+            friends = []
+
+            # get all relationships related to the requested user
+            relationships = UserRelationship.objects.filter(
+                Q(user1=requested_user) | Q(user2=requested_user), relation_type='friends')
+            
+            # filter and get a list of requested user's friends
+            for relationship in relationships:
+                if requested_user.pk == relationship.user1.pk:
+                    friends.append(relationship.user2)
+                else:
+                    friends.append(relationship.user1)
+
+            # sort friends by username
+            friends.sort(key=lambda x: x.username)
+            
+            return friends
     

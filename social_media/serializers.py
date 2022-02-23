@@ -10,6 +10,15 @@ class AppUserSerializer(serializers.ModelSerializer):
             'email',
             'username'
         ]
+        
+class FriendListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AppUser
+        fields = [
+            'id',
+            'profile_image',
+            'username'
+        ]
 
 class PostSerializer(serializers.ModelSerializer):
     # owner = AppUserSerializer()
