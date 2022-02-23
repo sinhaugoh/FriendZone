@@ -1,7 +1,6 @@
 from django.http import JsonResponse
 from rest_framework.response import Response
-from rest_framework import generics
-from rest_framework import status
+from rest_framework import generics, status, permissions
 import json
 
 from .models import UserRelationship, AppUser, Post
@@ -248,8 +247,9 @@ def create_post(request):
 ###################### DRF ##################
 class UserPostList(generics.ListAPIView):
     serializer_class = PostSerializer
+    lookup_field = 'username'
     
     def get_queryset(self):
-        user_id = self.kwargs['id']
+        username = self.kwargs['username']
         
-        return Post.objects.filter(owner__pk=user_id)
+    

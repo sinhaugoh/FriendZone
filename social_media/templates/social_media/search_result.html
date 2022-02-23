@@ -5,7 +5,7 @@
 {% for user in user_results %}
 <ul>
     <img src="{{ user.profile_image_url }}" alt="profile image">
-    <li><a href="{% url 'profile' id=user.id %}">{{ user.username }}</a></li>
+    <li><a href="{% url 'profile' username=user.username %}">{{ user.username }}</a></li>
     <li>Is friend: {{ user.is_friend }}</li>
     <li>Is own: {{ user.is_own }}</li>
     <li>Relation type: {{ user.relation_type }}</li>

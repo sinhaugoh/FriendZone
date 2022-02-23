@@ -25,11 +25,11 @@ urlpatterns = [
     path('login/', user_login, name='login'),
     path('logout/', user_logout, name='logout'),
     path('search/', search_user, name='search'),
-    path('password_change/', password_change, name='password_change'),
-    path('profile/<int:id>/', profile, name='profile'),
-    path('profile/<int:id>/friends/', friend_list, name='friend_list'),
-    path('profile/update/', profile_update, name='profile_update'),
-    path('profile/friend_requests/', friend_requests_list, name='friend_requests'),
+    path('user/<str:username>/', profile, name='profile'),
+    path('user/<str:username>/friends/', friend_list, name='friend_list'),
+    path('account/password_change/', password_change, name='password_change'),
+    path('account/update/', profile_update, name='profile_update'),
+    path('account/friend_requests/', friend_requests_list, name='friend_requests'),
 
     # apis
     path('api/friend_request/', send_friend_request, name='send_friend_request'),
@@ -41,5 +41,7 @@ urlpatterns = [
          name='decline_friend_request'),
     path('api/friend_remove/', remove_friend, name='remove_friend'),
     path('api/post/create/', create_post, name='create_post'),
-    path('api/user/<int:id>/posts/', UserPostList.as_view(), name='user_posts'),
+    path('api/user/<str:username>/posts/', UserPostList.as_view(), name='user_posts'),
+    
+    ###### NOT USED #########
 ]

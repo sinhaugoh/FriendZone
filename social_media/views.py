@@ -135,11 +135,11 @@ def user_logout(request):
     return redirect('index')
 
 
-def profile(request, id):
+def profile(request, username):
     # get the requested user
     requested_user = None
     try:
-        requested_user = AppUser.objects.get(pk=id)
+        requested_user = AppUser.objects.get(username=username)
 
     except AppUser.DoesNotExist:
         # requested user does not exist
@@ -163,7 +163,7 @@ def profile(request, id):
         context['is_own_profile'] = app_user.pk == requested_user.pk
 
         # fetch profile user's posts
-        response = requests.get(request.build_absolute_uri(reverse('user_posts', kwargs={'id': requested_user.pk})))
+        response = requests.get(request.build_absolute_uri(reverse('user_posts', kwargs={'username': requested_user.username})))
         context['posts'] = response.json()
         
         # get the relationship between the logged in user and the requested user
@@ -276,13 +276,13 @@ def profile_update(request):
         return redirect('login')
 
 
-def friend_list(request, id):
+def friend_list(request, username):
     app_user = request.user
 
     if app_user.is_authenticated:
         requested_user = None
         try:
-            requested_user = AppUser.objects.get(pk=id)
+            requested_user = AppUser.objects.get(username=username)
         except AppUser.DoesNotExist:
             return Http404()
 

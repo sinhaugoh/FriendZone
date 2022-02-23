@@ -6,7 +6,7 @@
     {% for friend_request in friend_requests %}
         <div id="{{ friend_request.id }}">
             <img src="{{ friend_request.profile_image_url }}" alt="profile image">
-            <a href="{% url 'profile' id=friend_request.id %}">{{ friend_request.username }}</a>
+            <a href="{% url 'profile' username=friend_request.username %}">{{ friend_request.username }}</a>
             <div id="relationship-action-{{ friend_request.id }}">
                 <button onclick="acceptFriendRequest('{{ friend_request.id }}')">Accept</button>
                 <button onclick="declineFriendRequest('{{ friend_request.id }}')">Decline</button>
