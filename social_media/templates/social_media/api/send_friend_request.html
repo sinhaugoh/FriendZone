@@ -31,12 +31,17 @@
                     relationshipActionsDiv.removeChild(relationshipActionsDiv.firstChild);
                 }
                 
-                // create cancel friend request button
+                // create relationship action section
+                let relationshipMessageP = document.createElement("p");
+                relationshipMessageP.innerText = "You have sent him/her a friend request.";
+                relationshipMessageP.classList.add("text-lg");
+
                 let cancelFriendRequestButton = document.createElement('button');
                 cancelFriendRequestButton.setAttribute("onClick", `cancelFriendRequest(${id})`);
                 cancelFriendRequestButton.textContent = 'Cancel friend request';
+                cancelFriendRequestButton.classList.add("button");
                 
-                // add the button into relationship action div
+                relationshipActionsDiv.appendChild(relationshipMessageP);
                 relationshipActionsDiv.appendChild(cancelFriendRequestButton);
             } else {
                 alert(response['response_msg']);

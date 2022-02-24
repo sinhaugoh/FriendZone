@@ -35,12 +35,17 @@
                         relationshipActionsDiv.removeChild(relationshipActionsDiv.firstChild);
                     }
 
-                    // create send friend request button
+                    // create relationship action section
+                    let relationshipMessageP = document.createElement("p");
+                    relationshipMessageP.innerText = "This user is not your friend. Send him/her a friend request?";
+                    relationshipMessageP.classList.add("text-lg");
+
                     let sendFriendRequestButton = document.createElement('button');
                     sendFriendRequestButton.setAttribute("onClick", `sendFriendRequest(${id})`);
                     sendFriendRequestButton.textContent = 'Send friend request';
+                    sendFriendRequestButton.classList.add("button");
 
-                    // add the button into relationship action div
+                    relationshipActionsDiv.appendChild(relationshipMessageP);
                     relationshipActionsDiv.appendChild(sendFriendRequestButton);
                 }
             } else {

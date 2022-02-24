@@ -35,12 +35,17 @@
                         relationshipActionsDiv.removeChild(relationshipActionsDiv.firstChild);
                     }
 
-                    // create remove friend button
+                    // create relationship action section
+                    let relationshipMessageP = document.createElement("p");
+                    relationshipMessageP.innerText = "This user is your friend.";
+                    relationshipMessageP.classList.add("text-lg");
+
                     let removeFriendButton = document.createElement('button');
                     removeFriendButton.setAttribute("onClick", `removeFriend(${id})`);
                     removeFriendButton.textContent = 'Remove friend';
+                    removeFriendButton.classList.add("button");
 
-                    // add the button into relationship action div
+                    relationshipActionsDiv.appendChild(relationshipMessageP)
                     relationshipActionsDiv.appendChild(removeFriendButton);
                 }
             } else {
