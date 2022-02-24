@@ -10,13 +10,13 @@ from .views import (index,
                     friend_list,
                     friend_requests_list,)
 
-from .apis import (FriendList, send_friend_request, 
+from .apis import (FriendList, SendFriendRequest, UserSearchList, send_friend_request, 
                    cancel_friend_request, 
                    accept_friend_request, 
                    decline_friend_request, 
                    remove_friend,
                    create_post,
-                   UserPostList)
+                   UserPostList, UserDetail)
 
 urlpatterns = [
     # views
@@ -45,4 +45,7 @@ urlpatterns = [
     
     ###### NOT USED #########
     path('api/user/<str:username>/friends/', FriendList.as_view(), name='friend_list_api'),
+    path('api/user/<str:username>/', UserDetail.as_view(), name='user_detail'),
+    path('api/user/search', UserSearchList.as_view(), name='user_search_list'),
+    path('api/friend_request-test/', SendFriendRequest.as_view()),
 ]
