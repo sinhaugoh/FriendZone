@@ -1,18 +1,24 @@
 {% extends 'social_media/base.html' %}
 
 {% block content %}
-<h1>Friend list</h1>
+    <h1 class="text-3xl mb-4">Friend list</h1>
     {% if is_own %}
         <div id="list-of-relationships">
-        {% for friend in friends %}
-            <div id="{{ friend.id }}">
-                <img src="{{ friend.profile_image_url }}" alt="profile image">
-                <p>{{ friend.username }}</p>
-                <div id="relationship-action-{{ friend.id }}">
-                    <button onclick="removeFriend('{{ friend.id }}')">Remove friend</button>
+            {% for friend in friends %}
+                <div id="{{ friend.id }}" class="border-solid shadow-md p-8 bg-white my-2">
+                    <div class="flex flex-wrap justify-between items-center">
+                        <a href="{% url 'profile' username=friend.username %}">
+                            <div class="flex items-center">
+                                <img class="avatar" src="{{ friend.profile_image_url }}" alt="profile image">
+                                <p class="text-xl font-semibold">{{ friend.username }}</p>
+                            </div>
+                        </a>
+                        <div id="relationship-action-{{ friend.id }}">
+                            <button class="button" onclick="removeFriend('{{ friend.id }}')">Remove friend</button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
         </div>
     {% else %}
         {% for friend in friends %}
