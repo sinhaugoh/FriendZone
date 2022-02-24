@@ -1,31 +1,26 @@
 {% extends 'social_media/base.html' %}
 
 {% block content %}
-<h1>Search result</h1>
+<h1 class="text-3xl mb-4">Search result</h1>
 {% for user in user_results %}
-<ul>
-    <img src="{{ user.profile_image_url }}" alt="profile image">
-    <li><a href="{% url 'profile' username=user.username %}">{{ user.username }}</a></li>
-    <li>Is friend: {{ user.is_friend }}</li>
-    <li>Is own: {{ user.is_own }}</li>
-    <li>Relation type: {{ user.relation_type }}</li>
-
-    {% if not user.is_own %}
-        {% if user.is_friend %}
-        <!-- Action: remove friend -->
-            <button>Remove friend</button>         
-        {% else %}
-        <!-- Action: add friend, accept/decline friend request, cancel friend request -->
-            {% if user.relation_type == 'not_friend' %}
-                <button>Add friend</button>
-            {% elif user.relation_type == 'sender' %}
-                <button>Cancel friend request</button>
-            {% elif user.relation_type == 'receiver' %}
-                <button>Accept friend request</button>
-                <button>Decline friend request</button>
-            {% endif %}
-        {% endif %}
-    {% endif %}
-</ul>
+    <div class="border-solid shadow-md p-8 bg-white my-2">
+        <div class="flex flex-wrap justify-between items-center">
+            <div class="flex items-center">
+                <img class="avatar" src="{{ user.profile_image_url }}" alt="result image">
+                <p class="text-xl font-semibold">{{ user.username }}</p>
+            </div>
+            <div>
+                <button class="button" onclick="redirectToProfile('{{ user.username }}')">View Profile</button>
+            </div>
+        </div>
+    </div>
 {% endfor %}
+{% endblock %}
+
+{% block javascript %}
+<script>
+    function redirectToProfile(username) {
+        window.location.href = "{% url 'profile' username='abc' %}".replace("abc", username);
+    }
+</script>
 {% endblock %}
