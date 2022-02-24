@@ -1,46 +1,75 @@
 {% extends 'social_media/base.html' %}
 
 {% block content %}
-    <h1>Profile</h1>
-    <p>Username: {{ username }}</p>
-    <p>Email: {{ email }}</p>
-    <p>Profile picture: <img src="{{ profile_image_url }}" alt="profile picture"></p>
-    <p>Is own profile = {{ is_own_profile }}</p>
-    {% if is_authenticated %}
-        {% if is_own_profile %}
-            <a href="{% url 'profile_update' %}"> Update profile</a>     
-            <a href="{% url 'friend_requests' %}">Friend requests</a>
-        {% endif %}
+    <!-- profile detail -->
+    <div class="relative">
+        <div class="flex flex-wrap items-center border-solid shadow-md p-8 bg-white my-2">
+            <div class="w-32 h-32 sm:w-72 sm:h-72 p-4">
+                <img class="avatar-big" src="{{ profile_image_url }}" alt="profile picture">
+            </div>
+            <div>
+                <p class="font-bold text-4xl py-2 px-4">{{ username }}</p>
+                <p class="text-xl py-2 px-4">{{ email }}</p>
+                <!-- <p>Is own profile = {{ is_own_profile }}</p> -->
+                {% if is_authenticated and not is_own_profile %}
+                    <button type="button" onclick="redirectToFriendList()" class="mt-2 mx-4 py-2 px-4 rounded-full border-0 font-semibold bg-blue-500 text-white hover:bg-blue-700">Friend List</button>
+                {% endif %}
+            </div>
+        </div>
+            {% if is_authenticated and is_own_profile %}
+                    <a href="{% url 'profile_update' %}" class="absolute top-4 right-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-blue-500 hover:stroke-blue-700 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
+                    </a>     
+                    <!-- <a href="{% url 'friend_requests' %}">Friend requests</a> -->
+            {% endif %}
+    </div>
 
+    {% if is_authenticated %}
         <!-- relationship action -->
         {% if not is_own_profile %}
-        <div id="relationship-action-{{ id }}">
+        <div id="relationship-action-{{ id }}" class=" sm:flex items-center justify-between border-solid shadow-md px-8 py-5 bg-white my-2">
             {% if is_friend %}
             <!-- Action: remove friend -->
-                <button onclick="removeFriend('{{ id }}')">Remove friend</button>         
+                <p class="text-lg">This user is your friend.</p>
+                <button class="button" onclick="removeFriend('{{ id }}')">Remove friend</button>         
             {% else %}
             <!-- Action: add friend, cancel friend request, accept/decline friend request -->
                 {% if relation_type == 'not_friend' %}
-                    <button onclick="sendFriendRequest('{{ id }}')">Send friend request</button>
+                    <p class="text-lg">This user is not your friend. Send him/her a friend request?</p>
+                    <button class="button" onclick="sendFriendRequest('{{ id }}')">Send friend request</button>
                 {% elif relation_type == 'sender' %}
-                    <button onclick="cancelFriendRequest('{{ id }}')">Cancel friend request</button>
+                    <p class="text-lg">You have sent him/her a friend request.</p>
+                    <button class="button" onclick="cancelFriendRequest('{{ id }}')">Cancel friend request</button>
                 {% elif relation_type == 'receiver' %}
-                    <button onclick="acceptFriendRequest('{{ id }}')">Accept friend request</button>
-                    <button onclick="declineFriendRequest('{{ id }}')">Decline friend request</button>
+                    <p class="text-lg">This user has sent you a friend request.</p>
+                    <div>
+                        <button  class="button" onclick="acceptFriendRequest('{{ id }}')">Accept</button>
+                        <button  class="button" onclick="declineFriendRequest('{{ id }}')">Decline</button>
+                    </div>
                 {% endif %}
             {% endif %}
-        {% endif %}
         </div>
-        <a href="{% url 'friend_list' username=username %}">Friend list</a>
+        {% endif %}
 
-        <!-- posts -->
-        <h1>Posts</h1>
         {% for post in posts %}
-            <div class="m-4 bg-white">
-            <p>{{ post.text|default_if_none:"" }}</p>
-            {% if post.image %}
-                <img src="{{ post.image }}">
-            {% endif %}
+            <!-- a post -->
+            <div class="border-solid shadow-md p-8 bg-white my-2">
+                <!-- header -->
+                <div class="flex mb-2 items-center">
+                    <img class="avatar" src="{{ profile_image_url }}">
+                    <div>
+                        <p class="text-xl font-semibold">{{ username }}</p>
+                        <p>{{ post.date_created }}</p>
+                    </div>
+                </div>
+                {% if post.text %}
+                <p class="text-lg sm:text-3xl">{{ post.text }}</p>
+                {% endif %}
+                {% if post.image %}
+                <img class="object-cover h-72 mt-2" src="{{ post.image }}">
+                {% endif %}
             </div>
         {% endfor %}
     {% endif %}
@@ -53,4 +82,10 @@
     {% include 'social_media/api/cancel_friend_request.html' %}
     {% include 'social_media/api/accept_friend_request.html' %}
     {% include 'social_media/api/decline_friend_request.html' %}
+    
+    <script>
+        function redirectToFriendList() {
+            window.location.href = "{% url 'friend_list' username=username %}";
+        }
+    </script>
 {% endblock %}
