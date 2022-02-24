@@ -2,7 +2,7 @@
 
 {% block content %}
     <h1>Update profile</h1>
-    <form action="/profile/update/" method="post" enctype="multipart/form-data"> {% csrf_token %}
+    <form action="{% url 'profile_update' %}" method="post" enctype="multipart/form-data"> {% csrf_token %}
         <img src="{{profile_update_form.initial.profile_image.url}}" alt="profile image">
         {{profile_update_form.as_p}}
         <input type="submit" value="Update">

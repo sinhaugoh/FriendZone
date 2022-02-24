@@ -265,7 +265,7 @@ def profile_update(request):
             if profile_update_form.is_valid():
                 profile_update_form.save()
 
-                return redirect('profile', id=app_user.id)
+                return redirect('profile', username=profile_update_form.cleaned_data['username'])
         else:
             profile_update_form = ProfileUpdateForm(
                 request.POST or None, instance=user)
