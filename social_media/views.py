@@ -203,42 +203,47 @@ def search_user(request):
             if search_input:
                 # if there is input
                 results = []
-                # get users where email or username contain the input
-                user_results = AppUser.objects.filter(
+                # get users where email or username contain the input (exclude the logged in user)
+                user_results = AppUser.objects.exclude(pk=app_user.pk).filter(
                     Q(email__icontains=search_input) | Q(username__icontains=search_input))
 
                 for user in user_results:
-                    temp_dict = {
-                        'id': user.id,
+                    results.append({
+                        'id': user.pk,
                         'profile_image_url': user.profile_image.url,
-                        'username': user.username,
-                        'is_own': app_user.pk == user.pk,
-                    }
-                    try:
-                        relationship = None
-                        if app_user.pk < user.pk:
-                            # get UserRelationship where user1 is app_user and user2 is user
-                            relationship = UserRelationship.objects.get(
-                                user1=app_user, user2=user)
-                            temp_dict['relation_type'] = 'sender' if relationship.relation_type == 'pending_user1_user2' else 'receiver'
-                        else:
-                            # get UserRelationship where user1 is user and user2 is app_user
-                            relationship = UserRelationship.objects.get(
-                                user1=user, user2=app_user)
-                            temp_dict['relation_type'] = 'sender' if relationship.relation_type == 'pending_user2_user1' else 'receiver'
+                        'username': user.username
+                    })
+                    # temp_dict = {
+                    #     'id': user.id,
+                    #     'profile_image_url': user.profile_image.url,
+                    #     'username': user.username,
+                    #     'is_own': app_user.pk == user.pk,
+                    # }
+                    # try:
+                    #     relationship = None
+                    #     if app_user.pk < user.pk:
+                    #         # get UserRelationship where user1 is app_user and user2 is user
+                    #         relationship = UserRelationship.objects.get(
+                    #             user1=app_user, user2=user)
+                    #         temp_dict['relation_type'] = 'sender' if relationship.relation_type == 'pending_user1_user2' else 'receiver'
+                    #     else:
+                    #         # get UserRelationship where user1 is user and user2 is app_user
+                    #         relationship = UserRelationship.objects.get(
+                    #             user1=user, user2=app_user)
+                    #         temp_dict['relation_type'] = 'sender' if relationship.relation_type == 'pending_user2_user1' else 'receiver'
 
-                        temp_dict['is_friend'] = relationship.relation_type == 'friends'
-                        # overwrite relation_type to 'friends' if they are friends
-                        if temp_dict['is_friend']:
-                            temp_dict['relation_type'] = 'friends'
+                    #     temp_dict['is_friend'] = relationship.relation_type == 'friends'
+                    #     # overwrite relation_type to 'friends' if they are friends
+                    #     if temp_dict['is_friend']:
+                    #         temp_dict['relation_type'] = 'friends'
 
-                    except UserRelationship.DoesNotExist:
-                        # if no relationship (not friend)
-                        temp_dict['is_friend'] = False
-                        temp_dict['relation_type'] = 'not_friend'
+                    # except UserRelationship.DoesNotExist:
+                    #     # if no relationship (not friend)
+                    #     temp_dict['is_friend'] = False
+                    #     temp_dict['relation_type'] = 'not_friend'
 
                     # append the result at the end of the loop
-                    results.append(temp_dict)
+                    # results.append(temp_dict)
 
                 context['user_results'] = results
 
