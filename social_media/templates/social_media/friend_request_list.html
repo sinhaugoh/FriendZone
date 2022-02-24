@@ -1,15 +1,23 @@
 {% extends 'social_media/base.html' %}
 
 {% block content %}
-    <h1>Friend requests</h1>
+    <h1 class="text-3xl mb-4">Friend requests</h1>
     <div id="list-of-relationships">
     {% for friend_request in friend_requests %}
         <div id="{{ friend_request.id }}">
-            <img src="{{ friend_request.profile_image_url }}" alt="profile image">
-            <a href="{% url 'profile' username=friend_request.username %}">{{ friend_request.username }}</a>
-            <div id="relationship-action-{{ friend_request.id }}">
-                <button onclick="acceptFriendRequest('{{ friend_request.id }}')">Accept</button>
-                <button onclick="declineFriendRequest('{{ friend_request.id }}')">Decline</button>
+            <div class="border-solid shadow-md p-8 bg-white my-2">
+                <div class="flex flex-wrap justify-between items-center">
+                    <a href="{% url 'profile' username=friend_request.username %}">
+                        <div class="flex items-center">
+                            <img class="avatar" src="{{ friend_request.profile_image_url }}" alt="result image">
+                            <p class="text-xl font-semibold">{{ friend_request.username }}</p>
+                        </div>
+                    </a>
+                    <div id="relationship-action-{{ friend_request.id }}">
+                        <button class="button" onclick="acceptFriendRequest('{{ friend_request.id }}')">Accept</button>
+                        <button class="button" onclick="declineFriendRequest('{{ friend_request.id }}')">Decline</button>
+                    </div>
+                </div>
             </div>
         </div>
     {% endfor %}
