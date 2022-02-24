@@ -238,7 +238,7 @@ def create_post(request):
             'owner_profile_image_path': post.owner.profile_image.url,
             'post_text': post.text,
             'post_image_path': None if post_form.cleaned_data['image'] is None else post.image.url,
-            'post_date_created': post.date_created
+            'post_date_created': post.date_created.strftime("%Y-%m-%d %H:%M")
         }
         return JsonResponse(payload, status=201)
     else:
@@ -254,7 +254,11 @@ class UserPostList(generics.ListAPIView):
     def get_queryset(self):
         username = self.kwargs['username']
         
-        return Post.objects.filter(owner__username=username)
+        posts = Post.objects.filter(owner__username=username).order_by('-date_created')
+        for post in posts:
+            post.date_created = post.date_created.strftime("%Y-%m-%d %H:%M")
+            
+        return posts
     
 
 ############# NOT USED ######################
