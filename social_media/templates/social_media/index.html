@@ -1,28 +1,54 @@
 {% extends 'social_media/base.html' %}
 
 {% block content %}
-<h1>Home page</h1>
-<div id="image-div">
-    <img src="#" id="post-image-preview">
-    <input type="file" name="image" accept="image/*" id="id_image" onchange="document.getElementById('post-image-preview').src = window.URL.createObjectURL(this.files[0])"><br>
-</div>
-<textarea name="text" id="id_text" cols="30" rows="10" maxlength="500" placeholder="How are you feeling today..."></textarea><br>
-<div id="post-errors-div"></div>
-<button id="post-button" onclick="create_post()">Post</button>
+<!-- post form -->
+<div class="border-solid shadow-md p-8 bg-white">
+    <!-- header -->
+    <div class="flex items-center mb-2">
+        <img class="avatar" src="{{ user.profile_image.url }}" alt="profile image">
+        <p class="text-xl font-semibold">{{ user.username }}</p>
+    </div>
 
-<h2>Feeds</h2>
+    <textarea class="border-2 w-full focus:outline-none p-2" name="text" id="id_text" cols="30" rows="10" maxlength="500" placeholder="How are you feeling today?"></textarea>
+    <div id="post-errors-div" class="form-error-text py-2"></div>
+    <div id="image-div" class="sm:flex justify-between">
+        <!-- <img src="#" id="post-image-preview">
+        <label for="id_image" class="button">Upload Image</label>
+        <input type="file" name="image" accept="image/*" id="id_image" class="show-for-sr" onchange="document.getElementById('post-image-preview').src = window.URL.createObjectURL(this.files[0])"><br> -->
+
+        <!-- image picker -->
+        <span class="sr-only">Choose profile photo</span>
+        <input type="file" name="image" accept="image/*" id="id_image" class="
+        text-blue-500
+        file:mr-4 file:py-2 file:px-4
+        file:rounded-full file:border-0
+        file:text-md file:font-semibold
+        file:bg-blue-500 file:text-white
+        hover:file:bg-blue-700
+        "/>
+        <button id="post-button" class="button" onclick="create_post()">Post</button>
+    </div>
+</div>
+
+
 <div id="posts">
 {% for post in posts %}
-    <div>
-        <p>Owner: {{ post.owner_username }}</p>
-        <img src="{{ post.owner_profile_image_path }}">
-        {% if post.post_image_path is not None %}
-        <img src="{{ post.post_image_path }}">
+    <!-- a post -->
+    <div class="border-solid shadow-md p-8 bg-white my-2">
+        <!-- header -->
+        <div class="flex mb-2 items-center">
+            <img class="avatar" src="{{ post.owner_profile_image_path }}">
+            <div>
+                <p class="text-xl font-semibold">{{ post.owner_username }}</p>
+                <p>{{ post.post_date_created|date:'Y-m-d H:i' }}</p>
+            </div>
+        </div>
+        {% if post.post_text %}
+        <p class="text-lg sm:text-3xl">{{ post.post_text }}</p>
         {% endif %}
-        {% if post.post_text is not None %}
-        <p>Text: {{ post.post_text }}</p>
+        {% if post.post_image_path %}
+        <img class="object-cover h-72 mt-2" src="{{ post.post_image_path }}">
         {% endif %}
-        <p>Date created: {{ post.post_date_created }}</p>
     </div>
 {% endfor %}
 </div>
