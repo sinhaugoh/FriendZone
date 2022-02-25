@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'social_media.apps.SocialMediaConfig',
     'rest_framework',
+    'channels',
+    'chat.apps.ChatConfig',
 ]
 
 # TODO: to be changed to restrict access
@@ -78,6 +80,12 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'endterm_application.wsgi.application'
+ASGI_APPLICATION = 'endterm_application.routing.application'
+
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+]
 
 
 # Database
@@ -143,3 +151,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # set the AppUser model from social_media app as the user model
 AUTH_USER_MODEL = 'social_media.AppUser'
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)]
+        }
+    }
+}

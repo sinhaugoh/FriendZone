@@ -1,0 +1,87 @@
+{% extends 'social_media/base.html' %}
+{% block content %}
+<div class="h-screen">
+   <!-- header -->
+   <div class="bg-white h-20 flex items-center pl-2 border-b-2">
+      <img class="avatar" src="{{ target_user.profile_image_path }}">
+      <p class="text-xl font-semibold">{{ target_user.username }}</p>
+   </div>
+   <!-- chat -->
+   <div id="messages" class="p-4 h-4/6 overflow-y-auto bg-white">
+      {% for message in messages %}
+         <div class="flex m-4">
+            <div class="flex bg-gray-100 rounded-lg p-4">
+               <img class="avatar" src="{{ message.sender.profile_image_path }}">
+               <div>
+                  <p class="text-lg font-semibold">{{ message.sender.username }}</p>
+                  <p class="break-all">{{ message.content }}</p>
+               </div>
+            </div>
+         </div>
+      {% endfor %}
+   </div>
+   <!-- text area -->
+   <div class="bg-white border-t-2 p-2 flex items-center">
+      <textarea id="input-field" class="rounded-lg grow border-2 p-2" autofocus></textarea>
+      <input id="send-button" type="button" class="button ml-2" value="Send">
+   </div>
+</div>
+
+   {{ room_name|json_script:"room-name" }}
+   {{ user.username|json_script:"username" }}
+   {{ user.profile_image.url|json_script:"profile-image-path" }}
+
+<script>
+   const roomName = JSON.parse(document.getElementById('room-name').textContent);
+   const username = JSON.parse(document.getElementById('username').textContent);
+   const profileImagePath = JSON.parse(document.getElementById('profile-image-path').textContent);
+
+   const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/' + roomName + '/'
+   );
+
+   chatSocket.onmessage = function (e) {
+      const data = JSON.parse(e.data);
+         
+      // add a message block into the messages
+      messages = document.getElementById('messages');
+      messages.innerHTML += '<div class="flex m-4">' +
+                           '<div class="flex bg-gray-100 rounded-lg p-4">' +
+                           '<img class="avatar" src="' + data['profile_image_path'] + '">' +
+                           '<div>' +
+                           '<p class="text-lg font-semibold">' + data['username'] + '</p>' +
+                           '<p class="break-all">' + data['message'] + '</p>' +
+                           '</div>' +
+                           '</div>' +
+                           '</div>'
+      scrollToBottom();
+   };
+
+   chatSocket.onclose = function (e) {
+      console.error('onclose');
+   };
+
+   document.querySelector('#send-button').onclick = function (e) {
+      const inputField = document.querySelector('#input-field');
+      const message = inputField.value;
+         
+      // send the message to websocket if it is not empty
+      if(message != '') {
+         chatSocket.send(JSON.stringify({
+            'message': message,
+            'username': username,
+            'profile_image_path': profileImagePath         
+         }));
+         
+         // clear input field
+         inputField.value = '';
+      }
+   };
+   
+   function scrollToBottom() {
+      const messages = document.getElementById('messages');
+      messages.scrollTop = messages.scrollHeight;
+   }
+   
+   scrollToBottom();
+</script>
+{% endblock %}
