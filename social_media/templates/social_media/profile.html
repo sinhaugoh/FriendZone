@@ -54,25 +54,56 @@
         {% endif %}
     {% endif %}
 
-    {% for post in posts %}
-        <!-- a post -->
-        <div class="border-solid shadow-md p-8 bg-white my-2">
-            <!-- header -->
-            <div class="flex mb-2 items-center">
-                <img class="avatar" src="{{ profile_image_url }}">
-                <div>
-                    <p class="text-xl font-semibold">{{ username }}</p>
-                    <p>{{ post.date_created }}</p>
-                </div>
-            </div>
-            {% if post.text %}
-            <p class="text-lg sm:text-3xl">{{ post.text }}</p>
-            {% endif %}
-            {% if post.image %}
-            <img class="object-cover h-72 mt-2" src="{{ post.image }}">
-            {% endif %}
+    <!-- post form -->
+    <div class="border-solid shadow-md p-8 bg-white">
+        <!-- header -->
+        <div class="flex items-center mb-2">
+            <img class="avatar" src="{{ user.profile_image.url }}" alt="profile image">
+            <p class="text-xl font-semibold">{{ user.username }}</p>
         </div>
-    {% endfor %}
+
+        <textarea class="border-2 w-full focus:outline-none p-2" name="text" id="id_text" cols="30" rows="10" maxlength="500" placeholder="How are you feeling today?"></textarea>
+        <div id="post-errors-div" class="form-error-text py-2"></div>
+        <div id="image-div" class="sm:flex justify-between">
+            <!-- <img src="#" id="post-image-preview">
+            <label for="id_image" class="button">Upload Image</label>
+            <input type="file" name="image" accept="image/*" id="id_image" class="show-for-sr" onchange="document.getElementById('post-image-preview').src = window.URL.createObjectURL(this.files[0])"><br> -->
+
+            <!-- image picker -->
+            <span class="sr-only">Choose profile photo</span>
+            <input type="file" name="image" accept="image/*" id="id_image" class="
+            text-blue-500
+            file:mr-4 file:py-2 file:px-4
+            file:rounded-full file:border-0
+            file:text-md file:font-semibold
+            file:bg-blue-500 file:text-white
+            hover:file:bg-blue-700
+            "/>
+            <button id="post-button" class="button" onclick="create_post()">Post</button>
+        </div>
+    </div>
+
+    <div id="posts">
+        {% for post in posts %}
+            <!-- a post -->
+            <div class="border-solid shadow-md p-8 bg-white my-2">
+                <!-- header -->
+                <div class="flex mb-2 items-center">
+                    <img class="avatar" src="{{ profile_image_url }}">
+                    <div>
+                        <p class="text-xl font-semibold">{{ username }}</p>
+                        <p>{{ post.date_created }}</p>
+                    </div>
+                </div>
+                {% if post.text %}
+                <p class="text-lg sm:text-3xl">{{ post.text }}</p>
+                {% endif %}
+                {% if post.image %}
+                <img class="object-cover h-72 mt-2" src="{{ post.image }}">
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
 
 {% endblock %}
 
@@ -82,6 +113,7 @@
     {% include 'social_media/api/cancel_friend_request.html' %}
     {% include 'social_media/api/accept_friend_request.html' %}
     {% include 'social_media/api/decline_friend_request.html' %}
+    {% include 'social_media/api/create_post.html' %}
     
     <script>
         function redirectToFriendList() {
