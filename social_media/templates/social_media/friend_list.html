@@ -2,7 +2,6 @@
 
 {% block content %}
     <h1 class="text-3xl mb-4">Friend list</h1>
-    {% if is_own %}
         <div id="list-of-relationships">
             {% for friend in friends %}
                 <div id="{{ friend.id }}" class="border-solid shadow-md p-8 bg-white my-2">
@@ -13,19 +12,15 @@
                                 <p class="text-xl font-semibold">{{ friend.username }}</p>
                             </div>
                         </a>
+                        {% if is_own %}
                         <div id="relationship-action-{{ friend.id }}">
                             <button class="button" onclick="removeFriend('{{ friend.id }}')">Remove friend</button>
                         </div>
+                        {% endif %}
                     </div>
                 </div>
             {% endfor %}
         </div>
-    {% else %}
-        {% for friend in friends %}
-            <img src="{{ friend.profile_image_url }}" alt="profile image">
-            <p>{{ friend.username }}</p>
-        {% endfor %}
-    {% endif %}
 {% endblock %}
 
 {% block javascript %}
