@@ -2,10 +2,6 @@ from django.db import models
 from django.conf import settings
 
 # Create your models here.
-# class ChatRoom(models.Model):
-#     users = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, null=True)
-#     date_modified = models.DateTimeField(auto_now=True)
-    
 class Message(models.Model):
     content = models.CharField(max_length=500, blank=False, null=False)
     receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING, related_name='receiver')
