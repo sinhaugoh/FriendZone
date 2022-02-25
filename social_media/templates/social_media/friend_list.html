@@ -1,7 +1,11 @@
 {% extends 'social_media/base.html' %}
 
 {% block content %}
-    <h1 class="text-3xl mb-4">Friend list</h1>
+    {% if is_own %}
+    <h1 class="text-3xl mb-4">Friend List</h1>
+    {% else %}
+    <h1 class="text-3xl mb-4">{{ requested_user_username }}'s Friend List</h1>
+    {% endif %}
         <div id="list-of-relationships">
             {% for friend in friends %}
                 <div id="{{ friend.id }}" class="border-solid shadow-md p-8 bg-white my-2">
@@ -14,6 +18,7 @@
                         </a>
                         {% if is_own %}
                         <div id="relationship-action-{{ friend.id }}">
+                            <a href="{% url 'chat_room' chat_target_id=friend.id %}" class="button">Message</a>
                             <button class="button" onclick="removeFriend('{{ friend.id }}')">Remove friend</button>
                         </div>
                         {% endif %}
