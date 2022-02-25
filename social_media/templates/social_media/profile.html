@@ -52,27 +52,27 @@
             {% endif %}
         </div>
         {% endif %}
-
-        {% for post in posts %}
-            <!-- a post -->
-            <div class="border-solid shadow-md p-8 bg-white my-2">
-                <!-- header -->
-                <div class="flex mb-2 items-center">
-                    <img class="avatar" src="{{ profile_image_url }}">
-                    <div>
-                        <p class="text-xl font-semibold">{{ username }}</p>
-                        <p>{{ post.date_created }}</p>
-                    </div>
-                </div>
-                {% if post.text %}
-                <p class="text-lg sm:text-3xl">{{ post.text }}</p>
-                {% endif %}
-                {% if post.image %}
-                <img class="object-cover h-72 mt-2" src="{{ post.image }}">
-                {% endif %}
-            </div>
-        {% endfor %}
     {% endif %}
+
+    {% for post in posts %}
+        <!-- a post -->
+        <div class="border-solid shadow-md p-8 bg-white my-2">
+            <!-- header -->
+            <div class="flex mb-2 items-center">
+                <img class="avatar" src="{{ profile_image_url }}">
+                <div>
+                    <p class="text-xl font-semibold">{{ username }}</p>
+                    <p>{{ post.date_created }}</p>
+                </div>
+            </div>
+            {% if post.text %}
+            <p class="text-lg sm:text-3xl">{{ post.text }}</p>
+            {% endif %}
+            {% if post.image %}
+            <img class="object-cover h-72 mt-2" src="{{ post.image }}">
+            {% endif %}
+        </div>
+    {% endfor %}
 
 {% endblock %}
 

@@ -155,6 +155,9 @@ def profile(request, username):
     context['is_own_profile'] = False
     context['is_authenticated'] = False
     
+    # fetch profile user's posts
+    response = requests.get(request.build_absolute_uri(reverse('user_posts', kwargs={'username': requested_user.username})))
+    context['posts'] = response.json()
 
     # if user is logged in
     app_user = request.user
@@ -162,9 +165,6 @@ def profile(request, username):
         context['is_authenticated'] = True
         context['is_own_profile'] = app_user.pk == requested_user.pk
 
-        # fetch profile user's posts
-        response = requests.get(request.build_absolute_uri(reverse('user_posts', kwargs={'username': requested_user.username})))
-        context['posts'] = response.json()
         
         # get the relationship between the logged in user and the requested user
         try:
