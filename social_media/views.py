@@ -143,7 +143,7 @@ def profile(request, username):
 
     except AppUser.DoesNotExist:
         # requested user does not exist
-        raise Http404('This page is not available')
+        raise Http404
 
     context = {}
 
@@ -289,7 +289,7 @@ def friend_list(request, username):
         try:
             requested_user = AppUser.objects.get(username=username)
         except AppUser.DoesNotExist:
-            return Http404()
+            raise Http404
 
         context = {}
         friends = []
@@ -315,6 +315,7 @@ def friend_list(request, username):
 
         context['friends'] = friends
         context['is_own'] = app_user.pk == requested_user.pk
+        context['requested_user_username'] = requested_user.username
         return render(request, 'social_media/friend_list.html', context)
     else:
         # TODO: can be changed so that people that are not authenticated can view certain info
