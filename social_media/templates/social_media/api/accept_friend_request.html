@@ -21,37 +21,30 @@
         let response = await fetch("{% url 'accept_friend_request' %}", options);
 
         if (response.ok) {
-            response = await response.json();
-
-            if (response['response_msg'] == 'Friend request accepted.') {
-                // successfully accepted friend request
-                // check if the relationship is in a list (friendlist, friend request list)
-                if (document.getElementById('list-of-relationships') != null) {
-                    // if in a list, remove the component from the list
-                    document.getElementById(id).remove();
-                } else {
-                    // remove all children
-                    while (relationshipActionsDiv.firstChild) {
-                        relationshipActionsDiv.removeChild(relationshipActionsDiv.firstChild);
-                    }
-
-                    // create relationship action section
-                    let relationshipMessageP = document.createElement("p");
-                    relationshipMessageP.innerText = "This user is your friend.";
-                    relationshipMessageP.classList.add("text-lg");
-
-                    let removeFriendButton = document.createElement('button');
-                    removeFriendButton.setAttribute("onClick", `removeFriend(${id})`);
-                    removeFriendButton.textContent = 'Remove friend';
-                    removeFriendButton.classList.add("button");
-
-                    relationshipActionsDiv.appendChild(relationshipMessageP)
-                    relationshipActionsDiv.appendChild(removeFriendButton);
-                }
+            // successfully accepted friend request
+            // check if the relationship is in a list (friendlist, friend request list)
+            if (document.getElementById('list-of-relationships') != null) {
+                // if in a list, remove the component from the list
+                document.getElementById(id).remove();
             } else {
-                alert(response['response_msg']);
-            }
+                // remove all children
+                while (relationshipActionsDiv.firstChild) {
+                    relationshipActionsDiv.removeChild(relationshipActionsDiv.firstChild);
+                }
 
+                // create relationship action section
+                let relationshipMessageP = document.createElement("p");
+                relationshipMessageP.innerText = "This user is your friend.";
+                relationshipMessageP.classList.add("text-lg");
+
+                let removeFriendButton = document.createElement('button');
+                removeFriendButton.setAttribute("onClick", `removeFriend(${id})`);
+                removeFriendButton.textContent = 'Remove friend';
+                removeFriendButton.classList.add("button");
+
+                relationshipActionsDiv.appendChild(relationshipMessageP)
+                relationshipActionsDiv.appendChild(removeFriendButton);
+            }
         } else {
             alert('Some error occurred while sending friend request. Please try again.');
         }

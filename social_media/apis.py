@@ -383,3 +383,38 @@ class CancelFriendRequest(APIView):
         except UserRelationship.DoesNotExist:
             # if the relationship is not found
             return Response({'detail': 'Invalid request Id.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+class AcceptFriendRequest(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def post(self, request):
+        app_user = request.user
+        data = request.data
+        requested_user_id = data.get('id', None)
+        
+        # check if required data exists
+        if not requested_user_id:
+            return Response({'detail': 'Invalid request.'},status=status.HTTP_400_BAD_REQUEST)
+        
+        # check if the requested_user exist
+        requested_user = None
+        try:
+            # exclude the app_user because app_user cannot be the requested_user
+            requested_user = AppUser.objects.exclude(pk=app_user.pk).get(pk=requested_user_id)
+        except AppUser.DoesNotExist:
+            # invalid requested_user_id
+            return Response({'detail': 'Invalid request Id.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # determine user1 and user2 in UserRelationship
+        user1, user2 = determine_user1_and_user2_in_user_relationship(app_user, requested_user)
+        
+        try:
+            # if the relationship is valid (current user is the friend request receiver)
+            relationship = UserRelationship.objects.get(user1=user1, user2=user2, relation_type='pending_user2_user1' if app_user.pk == user1.pk else 'pending_user1_user2')
+            # accept the friend request
+            relationship.accept_friend_request()
+            
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except UserRelationship.DoesNotExist:
+            # if the relationship is not found
+            return Response({'detail': 'Invalid request Id.'}, status=status.HTTP_400_BAD_REQUEST)
