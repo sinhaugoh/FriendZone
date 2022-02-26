@@ -32,7 +32,8 @@ urlpatterns = [
     path('account/friend_requests/', friend_requests_list, name='friend_requests'),
 
     # apis
-    path('api/friend_request/', send_friend_request, name='send_friend_request'),
+#     path('api/friend_request/', send_friend_request, name='send_friend_request'),
+    path('api/friend_request/', SendFriendRequest.as_view(), name='send_friend_request'),
     path('api/friend_request_cancel', cancel_friend_request,
          name='cancel_friend_request'),
     path('api/friend_request_accept/', accept_friend_request,
@@ -47,5 +48,4 @@ urlpatterns = [
     path('api/user/<str:username>/friends/', FriendList.as_view(), name='friend_list_api'),
     path('api/user/<str:username>/', UserDetail.as_view(), name='user_detail'),
     path('api/user/search', UserSearchList.as_view(), name='user_search_list'),
-    path('api/friend_request-test/', SendFriendRequest.as_view()),
 ]

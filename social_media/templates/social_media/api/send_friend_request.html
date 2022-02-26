@@ -22,30 +22,24 @@
         let response = await fetch("{% url 'send_friend_request' %}", options);
             
         if (response.ok) {
-            response = await response.json();
-
-            if (response['response_msg'] == 'Friend request sent.') {
-                // successfully sent friend request
-                // remove all children
-                while(relationshipActionsDiv.firstChild) {
-                    relationshipActionsDiv.removeChild(relationshipActionsDiv.firstChild);
-                }
-                
-                // create relationship action section
-                let relationshipMessageP = document.createElement("p");
-                relationshipMessageP.innerText = "You have sent him/her a friend request.";
-                relationshipMessageP.classList.add("text-lg");
-
-                let cancelFriendRequestButton = document.createElement('button');
-                cancelFriendRequestButton.setAttribute("onClick", `cancelFriendRequest(${id})`);
-                cancelFriendRequestButton.textContent = 'Cancel friend request';
-                cancelFriendRequestButton.classList.add("button");
-                
-                relationshipActionsDiv.appendChild(relationshipMessageP);
-                relationshipActionsDiv.appendChild(cancelFriendRequestButton);
-            } else {
-                alert(response['response_msg']);
+            // successfully sent friend request
+            // remove all children
+            while(relationshipActionsDiv.firstChild) {
+                relationshipActionsDiv.removeChild(relationshipActionsDiv.firstChild);
             }
+            
+            // create relationship action section
+            let relationshipMessageP = document.createElement("p");
+            relationshipMessageP.innerText = "You have sent him/her a friend request.";
+            relationshipMessageP.classList.add("text-lg");
+
+            let cancelFriendRequestButton = document.createElement('button');
+            cancelFriendRequestButton.setAttribute("onClick", `cancelFriendRequest(${id})`);
+            cancelFriendRequestButton.textContent = 'Cancel friend request';
+            cancelFriendRequestButton.classList.add("button");
+            
+            relationshipActionsDiv.appendChild(relationshipMessageP);
+            relationshipActionsDiv.appendChild(cancelFriendRequestButton);
 
         } else {
             alert('Some error occurred while sending friend request. Please try again.');

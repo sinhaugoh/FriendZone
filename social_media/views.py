@@ -10,8 +10,6 @@ from .models import AppUser, UserRelationship, Post
 from .forms import RegistrationForm, LoginForm, ProfileUpdateForm
 
 # Create your views here.
-
-
 def index(request):
     app_user = request.user
 
