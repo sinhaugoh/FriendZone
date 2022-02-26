@@ -14,7 +14,7 @@ from .apis import (FriendList, SendFriendRequest, UserSearchList, CancelFriendRe
                    AcceptFriendRequest,
                    DeclineFriendRequest,
                    RemoveFriend,
-                   create_post,
+                   CreatePost,
                    UserPostList, UserDetail)
 
 urlpatterns = [
@@ -39,7 +39,8 @@ urlpatterns = [
     path('api/friend_request_decline/', DeclineFriendRequest.as_view(),
          name='decline_friend_request'),
     path('api/friend_remove/', RemoveFriend.as_view() , name='remove_friend'),
-    path('api/post/create/', create_post, name='create_post'),
+#     path('api/post/create/', create_post, name='create_post'),
+    path('api/post/create/', CreatePost.as_view(), name='create_post'),
     path('api/user/<str:username>/posts/', UserPostList.as_view(), name='user_posts'),
     
     ###### NOT USED #########

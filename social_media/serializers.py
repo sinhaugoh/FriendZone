@@ -1,3 +1,4 @@
+from django.forms import ImageField
 from rest_framework import serializers
 
 from .models import Post, AppUser
@@ -22,7 +23,7 @@ class FriendListSerializer(serializers.ModelSerializer):
         ]
 
 class PostSerializer(serializers.ModelSerializer):
-    # owner = AppUserSerializer()
+    image = ImageField(max_length=256, allow_empty_file=True)
     
     class Meta:
         model = Post
@@ -32,3 +33,13 @@ class PostSerializer(serializers.ModelSerializer):
             'text',
             'date_created'   
         ]
+        
+    # def create(self, validated_data):
+    #     print('create')
+    #     image = validated_data['image']
+    #     text = validated_data['text']
+    #     # make sure at least one of them is provided
+    #     if image is None and text is None:
+    #         raise serializers.ValidationError('You must at least provide an image or status text.')
+        
+    #     return Post.objects.create(**validated_data)
