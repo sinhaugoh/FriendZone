@@ -151,11 +151,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # set the AppUser model from social_media app as the user model
 AUTH_USER_MODEL = 'social_media.AppUser'
 
+# Use this cofig if using redis(v5 +)
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#         'CONFIG': {
+#             'hosts': [('127.0.0.1', 6379)]
+#         }
+#     }
+# }
+
+# this will not be used in production
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [('127.0.0.1', 6379)]
-        }
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
     }
 }
