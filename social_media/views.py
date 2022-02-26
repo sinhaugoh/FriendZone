@@ -1,11 +1,9 @@
 from django.shortcuts import render, redirect
 from django.http import Http404, HttpResponse
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
-from django.urls import reverse
 from django.views.decorators.cache import never_cache
 from django.db.models import Q
 from django.contrib.auth.forms import PasswordChangeForm
-import requests
 
 from .models import AppUser, UserRelationship, Post
 
@@ -154,10 +152,6 @@ def profile(request, username):
     context['profile_image_url'] = requested_user.profile_image.url
     context['is_own_profile'] = False
     context['is_authenticated'] = False
-    
-    # fetch profile user's posts
-    response = requests.get(request.build_absolute_uri(reverse('user_posts', kwargs={'username': requested_user.username})))
-    context['posts'] = response.json()
 
     # if user is logged in
     app_user = request.user

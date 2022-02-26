@@ -82,29 +82,70 @@
             <button id="post-button" class="button" onclick="create_post()">Post</button>
         </div>
     </div>
+    
+    <div id="posts"></div>
 
-    <div id="posts">
-        {% for post in posts %}
-            <!-- a post -->
-            <div class="border-solid shadow-md p-8 bg-white my-2">
-                <!-- header -->
-                <div class="flex mb-2 items-center">
-                    <img class="avatar" src="{{ profile_image_url }}">
-                    <div>
-                        <p class="text-xl font-semibold">{{ username }}</p>
-                        <p>{{ post.date_created }}</p>
-                    </div>
-                </div>
-                {% if post.text %}
-                <p class="text-lg sm:text-3xl">{{ post.text }}</p>
-                {% endif %}
-                {% if post.image %}
-                <img class="object-cover h-72 mt-2" src="{{ post.image }}">
-                {% endif %}
-            </div>
-        {% endfor %}
-    </div>
+    {{ username|json_script:"username"}}
+    {{ user.profile_image.url|json_script:"profile-image-path" }}
+    <script>
+        
+        let username = JSON.parse(document.getElementById('username').textContent);
+        let profileImagePath = JSON.parse(document.getElementById('profile-image-path').textContent);
+        let url = "{% url 'user_posts' username='abc' %}".replace('abc', username);
 
+        fetch(url).then(function(response) {
+            return response.json()
+        }).then(function (data) {
+            let postsDiv = document.getElementById('posts');
+
+            for(let i = 0; i < data.length; i++) {
+                let postDiv = document.createElement('div');
+                postDiv.classList.add('border-solid', 'shadow-md', 'p-8', 'bg-white', 'my-2')
+                        
+                // header
+                let headerDiv = document.createElement('div');
+                headerDiv.classList.add('flex', 'mb-2', 'items-center');
+
+                let profileImage = document.createElement('img');
+                profileImage.setAttribute('src', profileImagePath)
+                profileImage.classList.add('avatar');
+                headerDiv.appendChild(profileImage);
+
+                let div = document.createElement('div');
+                let usernameP = document.createElement('p');
+                usernameP.innerText = username;
+                usernameP.classList.add('text-xl', 'font-semibold')
+                div.appendChild(usernameP);
+                        
+                let dateCreatedP = document.createElement('p');
+                dateCreatedP.innerText = data[i]['date_created'];
+                div.appendChild(dateCreatedP);
+                headerDiv.appendChild(div);
+                postDiv.appendChild(headerDiv);
+                        
+                // post content
+                if (data[i]['text'] != null) {
+                    let textP = document.createElement('p');
+                    textP.innerText = data[i]['text'];
+                    textP.classList.add('text-lg', 'sm:text-3xl');
+                    postDiv.appendChild(textP);
+                }
+                        
+                if(data[i]['image'] != null) {
+                    let postImg = document.createElement('img');
+                    postImg.setAttribute('src', data[i]['image']);
+                    postImg.classList.add('object-cover', 'h-72', 'mt-2');
+                    postDiv.appendChild(postImg)
+                }
+
+                postsDiv.appendChild(postDiv);
+            }
+        })
+
+        function redirectToFriendList() {
+            window.location.href = "{% url 'friend_list' username=username %}";
+        }
+    </script>
 {% endblock %}
 
 {% block javascript %}
@@ -114,10 +155,4 @@
     {% include 'social_media/api/accept_friend_request.html' %}
     {% include 'social_media/api/decline_friend_request.html' %}
     {% include 'social_media/api/create_post.html' %}
-    
-    <script>
-        function redirectToFriendList() {
-            window.location.href = "{% url 'friend_list' username=username %}";
-        }
-    </script>
 {% endblock %}
