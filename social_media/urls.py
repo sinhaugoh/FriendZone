@@ -12,7 +12,7 @@ from .views import (index,
 
 from .apis import (FriendList, SendFriendRequest, UserSearchList, CancelFriendRequest,
                    AcceptFriendRequest,
-                   decline_friend_request, 
+                   DeclineFriendRequest,
                    remove_friend,
                    create_post,
                    UserPostList, UserDetail)
@@ -31,17 +31,12 @@ urlpatterns = [
     path('account/friend_requests/', friend_requests_list, name='friend_requests'),
 
     # apis
-#     path('api/friend_request/', send_friend_request, name='send_friend_request'),
     path('api/friend_request/', SendFriendRequest.as_view(), name='send_friend_request'),
-#     path('api/friend_request_cancel', cancel_friend_request,
-#          name='cancel_friend_request'),
     path('api/friend_request_cancel', CancelFriendRequest.as_view(),
          name='cancel_friend_request'),
-#     path('api/friend_request_accept/', accept_friend_request,
-#          name='accept_friend_request'),
     path('api/friend_request_accept/', AcceptFriendRequest.as_view(),
          name='accept_friend_request'),
-    path('api/friend_request_decline/', decline_friend_request,
+    path('api/friend_request_decline/', DeclineFriendRequest.as_view(),
          name='decline_friend_request'),
     path('api/friend_remove/', remove_friend, name='remove_friend'),
     path('api/post/create/', create_post, name='create_post'),
