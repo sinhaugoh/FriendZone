@@ -1,11 +1,47 @@
 {% extends 'social_media/base.html' %}
 
 {% block content %}
-    <h1>Update profile</h1>
-    <form action="{% url 'profile_update' %}" method="post" enctype="multipart/form-data"> {% csrf_token %}
-        <img src="{{profile_update_form.initial.profile_image.url}}" alt="profile image">
-        {{profile_update_form.as_p}}
-        <input type="submit" value="Update">
-        <a href="javascript:history.back()">Cancel</a>
+<div class="grid place-items-center h-screen ">
+    <!-- <h1>Update profile</h1> -->
+    <form class="form" action="{% url 'profile_update' %}" method="post" enctype="multipart/form-data"> {% csrf_token %}
+        <img id="profile-image-preview" class="mb-4" src="{{profile_update_form.initial.profile_image.url}}" alt="profile image">
+        <div class="mb-4">
+            <label class="field-label" for="id_email">
+              Email
+            </label>
+            <input class="text-input" type="email" name="email" id="id_email" value="{{ profile_update_form.email.data|default_if_none:profile_update_form.initial.email }}" placeholder="abc@email.com" maxlength="256" required>
+        </div>
+        <div class="mb-4">
+            <label class="field-label" for="id_username">
+              Username
+            </label>
+            <input class="text-input" type="text" name="username" id="id_username" maxlength="150" value="{{ profile_update_form.username.data|default_if_none:profile_update_form.initial.username }}" placeholder="user123" required>
+        </div>
+        <!-- image picker -->
+        <div class="mb-6">
+            <span class="sr-only">Choose profile photo</span>
+            <input type="file" name="profile_image" accept="image/*" id="id_profile_image" class="
+            text-blue-500
+            file:mr-4 file:py-2 file:px-4
+            file:rounded-full file:border-0
+            file:text-md file:font-semibold
+            file:bg-blue-500 file:text-white
+            hover:file:bg-blue-700
+            " onchange="document.getElementById('profile-image-preview').src = window.URL.createObjectURL(this.files[0])"/>
+        </div>
+
+        <!-- display errors -->
+        {% for field in profile_update_form %}
+            {% for error in field.errors %}
+                <p class="form-error-text">{{ error }}</p>
+            {% endfor %}
+        {% endfor %}
+        {% if profile_update_form.non_field_errors is not None %}
+            <p class="form-error-text">{{ profile_update_form.non_field_errors.as_text }}</p>
+        {% endif %}
+
+        <input class="form-button mt-4" type="submit" value="Update">
+        <button class="form-button mt-4" onclick="javascript:history.back()">Cancel</button>
     </form>
+</div>
 {% endblock %}

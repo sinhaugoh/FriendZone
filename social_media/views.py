@@ -131,6 +131,7 @@ def user_logout(request):
     return redirect('index')
 
 
+@never_cache
 def profile(request, username):
     # get the requested user
     requested_user = None
