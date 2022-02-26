@@ -13,7 +13,7 @@ from .views import (index,
 from .apis import (FriendList, SendFriendRequest, UserSearchList, CancelFriendRequest,
                    AcceptFriendRequest,
                    DeclineFriendRequest,
-                   remove_friend,
+                   RemoveFriend,
                    create_post,
                    UserPostList, UserDetail)
 
@@ -38,7 +38,7 @@ urlpatterns = [
          name='accept_friend_request'),
     path('api/friend_request_decline/', DeclineFriendRequest.as_view(),
          name='decline_friend_request'),
-    path('api/friend_remove/', remove_friend, name='remove_friend'),
+    path('api/friend_remove/', RemoveFriend.as_view() , name='remove_friend'),
     path('api/post/create/', create_post, name='create_post'),
     path('api/user/<str:username>/posts/', UserPostList.as_view(), name='user_posts'),
     
