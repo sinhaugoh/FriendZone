@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, redirect
 from django.http import Http404
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
@@ -206,6 +207,7 @@ def search_user(request):
 
     if request.method == 'GET':
         search_input = request.GET.get('query')
+        page_number = request.GET.get('page', 1)
         context = {}
 
         if search_input:
@@ -213,7 +215,7 @@ def search_user(request):
             results = []
             # get users where email or username contain the input (exclude the logged in user)
             user_results = AppUser.objects.exclude(pk=app_user.pk).filter(
-                Q(email__icontains=search_input) | Q(username__icontains=search_input))
+                Q(email__icontains=search_input) | Q(username__icontains=search_input)).order_by('username')
 
             for user in user_results:
                 results.append({
@@ -221,8 +223,21 @@ def search_user(request):
                     'profile_image_url': user.profile_image.url,
                     'username': user.username
                 })
+                
+            # pagination
+            paginator = Paginator(results, 5)
+            
+            try:
+                paginated_results = paginator.page(page_number)
+            except PageNotAnInteger:
+                # if page_number is not integer
+                paginated_results = paginator.page(1)
+            except EmptyPage:
+                # return the last page if page number is out of range
+                paginated_results = paginator.page(paginator.num_pages)
 
-            context['user_results'] = results
+            context['paginated_results'] = paginated_results
+            context['query'] = search_input
 
     return render(request, 'social_media/search_result.html', context)
 

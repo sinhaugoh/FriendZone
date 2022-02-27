@@ -1,0 +1,45 @@
+<div class="flex flex-col items-center">
+    <span class="text-md text-gray-700 dark:text-gray-400">
+        Showing page <span class="text-lg font-semibold text-black">{{ paginated_results.number }}</span> of <span class="text-lg font-semibold text-black">{{ paginated_results.paginator.num_pages }}</span>
+    </span>
+    <div class="inline-flex mt-2 xs:mt-0">
+        <!-- Buttons -->
+        {% if paginated_results.has_previous %}
+            {% if query %}
+            <a href="?query={{ query }}&page={{ paginated_results.previous_page_number }}" class="inline-flex items-center py-2 px-4 text-sm font-medium text-white bg-blue-500 rounded-l hover:bg-blue-700">
+                <svg class="mr-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>
+                Prev
+            </a>
+            {% else %}
+            <a href="?page={{ paginated_results.previous_page_number }}" class="inline-flex items-center py-2 px-4 text-sm font-medium text-white bg-blue-500 rounded-l hover:bg-blue-700">
+                <svg class="mr-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>
+                Prev
+            </a>
+            {% endif %}
+        {% else %}
+            <a href="javascript:void(0)" class="inline-flex items-center py-2 px-4 text-sm font-medium text-white bg-blue-500 rounded-l hover:bg-blue-700">
+                <svg class="mr-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg>
+                Prev
+            </a>
+        {% endif %}
+
+        {% if paginated_results.has_next %}
+            {% if query %}
+            <a href="?query={{ query }}&page={{ paginated_results.next_page_number }}" class="inline-flex items-center py-2 px-4 text-sm font-medium text-white bg-blue-500 rounded-r border-0 border-l border-gray-300 hover:bg-blue-700">
+                Next
+                <svg class="ml-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+            </a>
+            {% else %}
+            <a href="?page={{ paginated_results.next_page_number }}" class="inline-flex items-center py-2 px-4 text-sm font-medium text-white bg-blue-500 rounded-r border-0 border-l border-gray-300 hover:bg-blue-700">
+                Next
+                <svg class="ml-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+            </a>
+            {% endif %}
+        {% else %}
+            <a href="javascript:void(0)" class="inline-flex items-center py-2 px-4 text-sm font-medium text-white bg-blue-500 rounded-r border-0 border-l border-gray-300 hover:bg-blue-700">
+                Next
+                <svg class="ml-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+            </a>
+        {% endif %}
+      </div>
+</div>

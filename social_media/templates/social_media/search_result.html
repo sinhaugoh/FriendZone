@@ -2,7 +2,7 @@
 
 {% block content %}
 <h1 class="text-3xl mb-4">Search result</h1>
-{% for user in user_results %}
+{% for user in paginated_results %}
     <div class="border-solid shadow-md p-8 bg-white my-2">
         <div class="flex flex-wrap justify-between items-center">
             <div class="flex items-center">
@@ -15,6 +15,7 @@
         </div>
     </div>
 {% endfor %}
+{% include 'social_media/pagination.html' %}
 {% endblock %}
 
 {% block javascript %}
