@@ -2,9 +2,9 @@
 
 {% block content %}
     {% if is_own %}
-    <h1 class="text-3xl mb-4">Friend List</h1>
+        <h1 class="text-3xl mb-4">Friend List</h1>
     {% else %}
-    <h1 class="text-3xl mb-4">{{ requested_user_username }}'s Friend List</h1>
+        <h1 class="text-3xl mb-4">{{ requested_user_username }}'s Friend List</h1>
     {% endif %}
         <div id="list-of-relationships">
             {% for friend in friends %}
@@ -17,10 +17,10 @@
                             </div>
                         </a>
                         {% if is_own %}
-                        <div id="relationship-action-{{ friend.id }}">
-                            <a href="{% url 'chat_room' chat_target_id=friend.id %}" class="button">Message</a>
-                            <button class="button" onclick="removeFriend('{{ friend.id }}')">Remove friend</button>
-                        </div>
+                            <div id="relationship-action-{{ friend.id }}">
+                                <a href="{% url 'chat_room' chat_target_id=friend.id %}" class="button">Message</a>
+                                <button class="button" onclick="removeFriend('{{ friend.id }}')">Remove friend</button>
+                            </div>
                         {% endif %}
                     </div>
                 </div>

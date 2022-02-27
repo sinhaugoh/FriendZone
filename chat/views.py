@@ -16,6 +16,9 @@ def create_room_name(user1_pk, user2_pk):
 
 @login_required(login_url='/login/')
 def chat_room(request, chat_target_id):
+    '''
+    Display chatroom between the app user and the target user
+    '''
     app_user = request.user
 
     # get user1_pk and user2_pk for UserRelationship
@@ -47,8 +50,8 @@ def chat_room(request, chat_target_id):
             })
 
         context['messages'] = message_list
-        
-        # get target user info
+
+        # get chat target user info
         target_user = AppUser.objects.get(pk=chat_target_id)
         context['target_user'] = {
             'username': target_user.username,

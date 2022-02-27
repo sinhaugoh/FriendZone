@@ -1,17 +1,19 @@
 from django.db import models
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
-from django.forms import ValidationError
 from .storage import OverwriteFileStorage
 
 DEFAULT_PROFILE_IMAGE_PATH = 'images/default_images/default_profile.png'
 
 # retrieve profile image path
+
+
 def get_profile_image_path(instance, _):
     return 'images/profile_images/{}/profile_image.jpg'.format(str(instance.pk))
 
+
 def get_post_image_path(instance, _):
-    return 'images/post_images/{}/{}/post_image.jpg'.format(str(instance.owner.pk),str(instance.pk))
+    return 'images/post_images/{}/{}/post_image.jpg'.format(str(instance.owner.pk), str(instance.pk))
 
 
 class AppUserManager(BaseUserManager):
@@ -60,47 +62,50 @@ class AppUser(AbstractUser):
     REQUIRED_FIELDS = ['username']
 
     objects = AppUserManager()
-    
-    
+
+
 RELATION_TYPE = (
     ('pending_user1_user2', 'pending_user1_user2'),
-    ('pending_user2_user1','pending_user2_user1'),
+    ('pending_user2_user1', 'pending_user2_user1'),
     ('friends', 'friends'),
 )
+
+
 class UserRelationship(models.Model):
     # user1 id is always smaller than user2 id
-    user1 = models.ForeignKey(AppUser, on_delete=models.CASCADE, related_name='user1')
-    user2 = models.ForeignKey(AppUser, on_delete=models.CASCADE, related_name='user2')
-    relation_type = models.CharField(max_length=50, choices=RELATION_TYPE, blank=False, null=False)
-    date_modified = models.DateTimeField( auto_now=True)
+    user1 = models.ForeignKey(
+        AppUser, on_delete=models.CASCADE, related_name='user1')
+    user2 = models.ForeignKey(
+        AppUser, on_delete=models.CASCADE, related_name='user2')
+    relation_type = models.CharField(
+        max_length=50, choices=RELATION_TYPE, blank=False, null=False)
+    date_modified = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = ('user1', 'user2')
-        
+
     def __str__(self):
         return '{} -- {}  type: {}'.format(self.user1.username, self.user2.username, self.relation_type)
 
     def accept_friend_request(self):
         self.relation_type = 'friends'
         self.save()
-        
-     
+
+    def save(self, *args, **kwargs):
+        # make sure user1's pk is always smaller than user2's pk
+        if self.user1.pk >= self.user2.pk:
+            raise ValueError('pk of user1 must be smaller than pk of user2')
+
+        super(UserRelationship, self).save(*args, **kwargs)
+
+
 class Post(models.Model):
-    image = models.ImageField(max_length=256, blank=True, null=True, upload_to=get_post_image_path)
-    text = models.CharField(max_length=500,blank=True, null=True)
+    image = models.ImageField(
+        max_length=256, blank=True, null=True, upload_to=get_post_image_path)
+    text = models.CharField(max_length=500, blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey(AppUser, on_delete=models.CASCADE)
-    
-    # class Meta:
-    #     constraints = [
-    #         models.CheckConstraint(
-    #             # database check
-    #             check=models.Q(image=None, text__isnull=False) |
-    #                   models.Q(text=None, image__isnull=False),
-    #             name='Image or text should not be empty.'
-    #         )
-    #     ]
-    
+
     def save(self, *args, **kwargs):
         if self.pk is None:
             # make instance pk retrievable when storing image

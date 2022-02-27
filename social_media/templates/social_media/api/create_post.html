@@ -33,63 +33,52 @@
 
         if (response.ok) {
             response = await response.json();
-                
+
             // clear textarea and image
             let textarea = document.getElementById("id_text");
             textarea.value = "";
             let fileInput = document.getElementById("id_image");
             fileInput.value = "";
-            
+
             data = response['data']
             let postsDiv = document.getElementById("posts");
             let postDiv = document.createElement("div");
             // add styles
-            postDiv.classList.add("border-solid");
-            postDiv.classList.add("shadow-md");
-            postDiv.classList.add("p-8");
-            postDiv.classList.add("bg-white");
-            postDiv.classList.add("my-2");
+            postDiv.classList.add('border-solid', 'shadow-md', 'p-8', 'bg-white', 'my-2');
 
             let headerDiv = document.createElement("div");
-            headerDiv.classList.add("flex");
-            headerDiv.classList.add("mb-2");
-            headerDiv.classList.add("items-center");
-            
+            headerDiv.classList.add('flex', 'mb-2', 'items-center')
+
             let ownerProfileImg = document.createElement("img");
             ownerProfileImg.setAttribute("src", data['owner_profile_image_path']);
             ownerProfileImg.classList.add("avatar");
             headerDiv.appendChild(ownerProfileImg);
-                
+
             let div = document.createElement("div");
 
             let ownerP = document.createElement("p");
             ownerP.innerText = data['owner_username'];
-            ownerP.classList.add("text-xl");
-            ownerP.classList.add("font-semibold");
+            ownerP.classList.add('text-xl', 'font-semibold');
             div.appendChild(ownerP);
-                
+
             let dateCreatedP = document.createElement("p");
             dateCreatedP.innerText = data['post_date_created'];
             div.appendChild(dateCreatedP);
-                
+
             headerDiv.appendChild(div);
             postDiv.appendChild(headerDiv);
 
             if (data['post_text'] != null) {
                 let textP = document.createElement("p");
                 textP.innerText = data['post_text'];
-                textP.classList.add("text-lg");
-                textP.classList.add("sm:text-3xl");
+                textP.classList.add('text-lg', 'sm:text-3xl')
                 postDiv.appendChild(textP);
             }
 
             if (data['post_image_path'] != null) {
                 let postImagePathImg = document.createElement("img");
                 postImagePathImg.setAttribute("src", data['post_image_path']);
-                postImagePathImg.classList.add("object-cover");
-                postImagePathImg.classList.add("h-72");
-                postImagePathImg.classList.add("sm:h-60");
-                postImagePathImg.classList.add("mt-2");
+                postImagePathImg.classList.add('object-cover', 'h-72', 'sm:h-60', 'mt-2');
                 postDiv.appendChild(postImagePathImg);
             }
 

@@ -7,11 +7,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FriendZone</title>
-    <!-- <link rel="stylesheet" href="{% static 'foundation/css/foundation.css' %}" /> -->
-    <!-- <link rel="stylesheet" href="{% static '/css/social_media.css' %}" /> -->
-
-    <!-- <script src="{% static 'foundation/js/vendor/jquery.js' %}"></script> -->
-    <!-- <script src="{% static 'foundation/js/vendor/foundation.min.js' %}"></script> -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- custom classes that made out of tailwind classes-->
@@ -87,6 +82,7 @@
                     Friend Requests
                 </a>
             </div>
+
             <!-- search bar -->
             <div class="relative mx-auto text-gray-600 lg:block hidden">
                 <input
@@ -103,20 +99,11 @@
               </svg>
                 </button>
             </div>
-            <!-- <div class="flex ">
-                <a href="#"
-                   class="block text-md px-4 py-2 rounded text-blue-700 ml-2 font-bold hover:text-white mt-4 hover:bg-blue-700 lg:mt-0">Sign
-                    in</a>
-    
-                <a href="#"
-                   class=" block text-md px-4  ml-2 py-2 rounded text-blue-700 font-bold hover:text-white mt-4 hover:bg-blue-700 lg:mt-0">login</a>
-            </div> -->
             <div class="lg:flex items-center">
                 <a href="{% url 'password_change' %}"
                    class=" block text-md px-4  lg:ml-2 py-2 rounded text-blue-500 font-bold hover:text-white mt-4 hover:bg-blue-700 lg:mt-0">Change Password</a>
                 <a href="{% url 'logout' %}"
                    class=" block text-md px-4  lg:ml-2 py-2 rounded text-blue-500 font-bold hover:text-white mt-4 hover:bg-blue-700 lg:mt-0">Sign Out</a>
-                <!-- <img onclick="" class="mx-4 rounded-full w-12 h-12 lg:block hidden" src="{{ user.profile_image.url }}" alt="profile image"> -->
             </div>
             {% else %}
             <div class="lg:flex items-center">
@@ -124,9 +111,7 @@
                    class=" block text-md px-4  lg:ml-2 py-2 rounded text-blue-500 font-bold hover:text-white mt-4 hover:bg-blue-700 lg:mt-0">Sign In</a>
                 <a href="{% url 'register' %}"
                    class=" block text-md px-4  lg:ml-2 py-2 rounded text-blue-500 font-bold hover:text-white mt-4 hover:bg-blue-700 lg:mt-0">Sign Up</a>
-                <!-- <img onclick="" class="mx-4 rounded-full w-12 h-12 lg:block hidden" src="{{ user.profile_image.url }}" alt="profile image"> -->
             </div>
-
             {% endif %}
         </div>
     

@@ -10,12 +10,16 @@ from .views import (index,
                     friend_list,
                     friend_requests_list,)
 
-from .apis import (FriendList, SendFriendRequest, UserSearchList, CancelFriendRequest,
+from .apis import (FriendList,
+                   SendFriendRequest,
+                   UserSearchList,
+                   CancelFriendRequest,
                    AcceptFriendRequest,
                    DeclineFriendRequest,
                    RemoveFriend,
                    CreatePost,
-                   UserPostList, UserDetail)
+                   UserPostList,
+                   UserDetail)
 
 urlpatterns = [
     # views
@@ -31,20 +35,22 @@ urlpatterns = [
     path('account/friend_requests/', friend_requests_list, name='friend_requests'),
 
     # apis
-    path('api/friend_request/', SendFriendRequest.as_view(), name='send_friend_request'),
+    path('api/friend_request/', SendFriendRequest.as_view(),
+         name='send_friend_request'),
     path('api/friend_request_cancel', CancelFriendRequest.as_view(),
          name='cancel_friend_request'),
     path('api/friend_request_accept/', AcceptFriendRequest.as_view(),
          name='accept_friend_request'),
     path('api/friend_request_decline/', DeclineFriendRequest.as_view(),
          name='decline_friend_request'),
-    path('api/friend_remove/', RemoveFriend.as_view() , name='remove_friend'),
-#     path('api/post/create/', create_post, name='create_post'),
+    path('api/friend_remove/', RemoveFriend.as_view(), name='remove_friend'),
     path('api/post/create/', CreatePost.as_view(), name='create_post'),
-    path('api/user/<str:username>/posts/', UserPostList.as_view(), name='user_posts'),
-    
+    path('api/user/<str:username>/posts/',
+         UserPostList.as_view(), name='user_posts'),
+
     ###### NOT USED #########
-    path('api/user/<str:username>/friends/', FriendList.as_view(), name='friend_list_api'),
+    path('api/user/<str:username>/friends/',
+         FriendList.as_view(), name='friend_list_api'),
     path('api/user/<str:username>/', UserDetail.as_view(), name='user_detail'),
-    path('api/user/search', UserSearchList.as_view(), name='user_search_list'),
+    path('api/search/', UserSearchList.as_view(), name='user_search_list'),
 ]

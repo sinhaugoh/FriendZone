@@ -1,6 +1,6 @@
 <script type="text/javascript">
     async function removeFriend(id) {
-        let data = {id: parseInt(id)};
+        let data = { id: parseInt(id) };
         let options = {
             method: "POST",
             headers: {
@@ -19,7 +19,7 @@
         }
 
         let response = await fetch("{% url 'remove_friend' %}", options);
-            
+
         if (response.ok) {
             // successfully removed friend
             // check if the relationship is in a list (friendlist, friend request list)
@@ -28,10 +28,10 @@
                 document.getElementById(id).remove();
             } else {
                 // remove all children
-                while(relationshipActionsDiv.firstChild) {
+                while (relationshipActionsDiv.firstChild) {
                     relationshipActionsDiv.removeChild(relationshipActionsDiv.firstChild);
                 }
-                
+
                 // create relationship action section
                 let relationshipMessageP = document.createElement("p");
                 relationshipMessageP.innerText = "This user is not your friend. Send him/her a friend request?";
@@ -41,7 +41,7 @@
                 sendFriendRequestButton.setAttribute("onClick", `sendFriendRequest(${id})`);
                 sendFriendRequestButton.textContent = 'Send friend request';
                 sendFriendRequestButton.classList.add("button");
-                
+
                 relationshipActionsDiv.appendChild(relationshipMessageP);
                 relationshipActionsDiv.appendChild(sendFriendRequestButton);
             }

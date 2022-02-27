@@ -10,8 +10,7 @@
             <div>
                 <p class="font-bold text-4xl py-2 px-4">{{ username }}</p>
                 <p class="text-xl py-2 px-4">{{ email }}</p>
-                <!-- <p>Is own profile = {{ is_own_profile }}</p> -->
-                {% if is_authenticated and not is_own_profile %}
+                {% if not is_own_profile %}
                     <button type="button" onclick="redirectToFriendList()" class="mt-2 mx-4 py-2 px-4 rounded-full border-0 font-semibold bg-blue-500 text-white hover:bg-blue-700">Friend List</button>
                 {% endif %}
             </div>
@@ -22,7 +21,6 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                         </svg>
                     </a>     
-                    <!-- <a href="{% url 'friend_requests' %}">Friend requests</a> -->
             {% endif %}
     </div>
 
@@ -63,10 +61,6 @@
                 <textarea class="border-2 w-full focus:outline-none p-2" name="text" id="id_text" cols="30" rows="10" maxlength="500" placeholder="How are you feeling today?"></textarea>
                 <div id="post-errors-div" class="form-error-text py-2"></div>
                 <div id="image-div" class="sm:flex justify-between">
-                    <!-- <img src="#" id="post-image-preview">
-                    <label for="id_image" class="button">Upload Image</label>
-                    <input type="file" name="image" accept="image/*" id="id_image" class="show-for-sr" onchange="document.getElementById('post-image-preview').src = window.URL.createObjectURL(this.files[0])"><br> -->
-
                     <!-- image picker -->
                     <span class="sr-only">Choose profile photo</span>
                     <input type="file" name="image" accept="image/*" id="id_image" class="

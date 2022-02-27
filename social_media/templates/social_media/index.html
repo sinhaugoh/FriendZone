@@ -44,10 +44,10 @@
             </div>
         </div>
         {% if post.post_text %}
-        <p class="text-lg sm:text-3xl">{{ post.post_text }}</p>
+            <p class="text-lg sm:text-3xl">{{ post.post_text }}</p>
         {% endif %}
         {% if post.post_image_path %}
-        <img class="object-cover h-72 mt-2" src="{{ post.post_image_path }}">
+            <img class="object-cover h-72 mt-2" src="{{ post.post_image_path }}">
         {% endif %}
     </div>
 {% endfor %}

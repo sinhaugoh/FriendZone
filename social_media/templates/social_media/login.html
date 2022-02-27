@@ -2,34 +2,34 @@
 
 {% block content %}
 <div class="grid place-items-center h-screen ">
-        <form action="/login/" method="post" class="form"> {% csrf_token %}
-          <h1 class="text-4xl md:text-5xl text-center mb-8">FriendZone</h1>
-          <div class="mb-4">
-            <label class="field-label" for="id_email">
-              Email
-            </label>
-            <input class="text-input" id="id_email" name="email" maxlength="256" type="email" placeholder="abc@email.com" value="{{ login_form.email.data|default_if_none:'' }}" required>
-          </div>
-          <div class="mb-6">
-            <label class="field-label" for="id_password">
-              Password
-            </label>
-            <input class="text-input" name="password" id="id_password" type="password" placeholder="*************" required>
-            <!-- display errors -->
-            {% for field in login_form %}
-                {% for error in field.errors %}
-                    <p class="form-error-text">{{ error }}</p>
-                {% endfor %}
-            {% endfor %}
-            {% if login_form.non_field_errors is not None %}
-                <p class="form-error-text">{{ login_form.non_field_errors.as_text }}</p>
-            {% endif %}
-          </div>
-            <input class="form-button" type="submit" value="Sign In">
-            <div class="mt-8">
-              <span class="text-gray-500">Don't have an account? </span>
-              <a href="{% url 'register' %}" class="text-blue-500 font-bold">Sign up</a>
-            </div>
-        </form>
+  <form action="/login/" method="post" class="form"> {% csrf_token %}
+    <h1 class="text-4xl md:text-5xl text-center mb-8">FriendZone</h1>
+    <div class="mb-4">
+      <label class="field-label" for="id_email">
+        Email
+      </label>
+      <input class="text-input" id="id_email" name="email" maxlength="256" type="email" placeholder="abc@email.com" value="{{ login_form.email.data|default_if_none:'' }}" required>
+    </div>
+    <div class="mb-6">
+      <label class="field-label" for="id_password">
+        Password
+      </label>
+      <input class="text-input" name="password" id="id_password" type="password" placeholder="*************" required>
+      <!-- display errors -->
+      {% for field in login_form %}
+          {% for error in field.errors %}
+              <p class="form-error-text">{{ error }}</p>
+          {% endfor %}
+      {% endfor %}
+      {% if login_form.non_field_errors is not None %}
+          <p class="form-error-text">{{ login_form.non_field_errors.as_text }}</p>
+      {% endif %}
+    </div>
+      <input class="form-button" type="submit" value="Sign In">
+      <div class="mt-8">
+        <span class="text-gray-500">Don't have an account? </span>
+        <a href="{% url 'register' %}" class="text-blue-500 font-bold">Sign up</a>
+      </div>
+  </form>
 </div>
 {% endblock %}
