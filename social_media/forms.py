@@ -17,10 +17,10 @@ class RegistrationForm(UserCreationForm):
         email = self.cleaned_data['email'].lower()
 
         try:
-            # retrieve a database instance with the same input
-            # if exist, raise error, else return lower case version of the input
+            # retrieve a database instance with the same email
+            # if exist, raise error, else return lower case version of the email
             AppUser.objects.get(email=email)
-            raise forms.ValidationError('Email is already in use.')
+            raise forms.ValidationError('Email already in use.')
         except AppUser.DoesNotExist:
             return email
 
@@ -29,8 +29,8 @@ class RegistrationForm(UserCreationForm):
         username = self.cleaned_data['username'].lower()
 
         try:
-            # retrieve a database instance with the same input
-            # if exist, raise error, else return lower case version of the input
+            # retrieve a database instance with the same username
+            # if exist, raise error, else return lower case version of the username
             AppUser.objects.get(username=username)
             raise forms.ValidationError('Username already in use.')
         except AppUser.DoesNotExist:
@@ -74,10 +74,10 @@ class ProfileUpdateForm(forms.ModelForm):
         email = self.cleaned_data['email'].lower()
 
         try:
-            # try to retrieve a database instance with the same input
-            # if exist, raise error, else return lower case version of the input
+            # try to retrieve a database instance with the same email
+            # if exist, raise error, else return lower case version of the email
             AppUser.objects.exclude(pk=self.instance.pk).get(email=email)
-            raise forms.ValidationError('Email is already in use.')
+            raise forms.ValidationError('Email already in use.')
         except AppUser.DoesNotExist:
             return email
 
@@ -86,8 +86,8 @@ class ProfileUpdateForm(forms.ModelForm):
         username = self.cleaned_data['username'].lower()
 
         try:
-            # try to retrieve a database instance with the same input
-            # if exist, raise error, else return lower case version of the input
+            # try to retrieve a database instance with the same username
+            # if exist, raise error, else return lower case version of the username
             AppUser.objects.exclude(pk=self.instance.pk).get(username=username)
             raise forms.ValidationError('Username already in use.')
         except AppUser.DoesNotExist:
