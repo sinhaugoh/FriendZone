@@ -238,6 +238,8 @@ def search_user(request):
 
             context['paginated_results'] = paginated_results
             context['query'] = search_input
+        else:
+            raise Http404
 
     return render(request, 'social_media/search_result.html', context)
 

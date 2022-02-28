@@ -51,7 +51,6 @@ class CreatePost(APIView):
     def post(self, request):
         app_user = request.user
         payload = {}
-
         post_form = PostForm(request.POST, request.FILES)
         if post_form.is_valid():
             # create the instance if the input is valid
@@ -305,7 +304,7 @@ class UserSearchList(generics.ListAPIView):
             return AppUser.objects.filter(
                 Q(email__icontains=query) | Q(username__icontains=query))
         else:
-            return None
+            raise Http404
 
 
 class FriendList(generics.ListAPIView):
