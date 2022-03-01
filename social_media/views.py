@@ -139,7 +139,7 @@ def user_logout(request):
     '''
     logout(request)
 
-    return redirect('index')
+    return redirect('login')
 
 
 @never_cache
@@ -207,6 +207,7 @@ def search_user(request):
 
     if request.method == 'GET':
         search_input = request.GET.get('query')
+        # default page number to 1
         page_number = request.GET.get('page', 1)
         context = {}
 
