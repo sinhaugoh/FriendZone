@@ -2,7 +2,6 @@ from django.test import TestCase, override_settings
 import tempfile
 import shutil
 
-
 from ..model_factories import *
 from ..serializers import *
 

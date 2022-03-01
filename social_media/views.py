@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from .models import AppUser, UserRelationship, Post
 from .forms import RegistrationForm, LoginForm, ProfileUpdateForm
 
+
 @login_required(login_url='/login/')
 def index(request):
     '''
@@ -224,10 +225,10 @@ def search_user(request):
                     'profile_image_url': user.profile_image.url,
                     'username': user.username
                 })
-                
+
             # pagination
             paginator = Paginator(results, 5)
-            
+
             try:
                 paginated_results = paginator.page(page_number)
             except PageNotAnInteger:

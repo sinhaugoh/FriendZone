@@ -7,7 +7,6 @@ import json
 
 from ..model_factories import *
 
-
 MEDIA_ROOT = tempfile.mkdtemp()
 TEST_SERVER_DOMAIN = 'http://testserver'
 USER_PASSWORD = 'Asdf1234'
@@ -38,6 +37,7 @@ class UserPostListTest(APITestCase):
 
     def test_validUsernameReturnSuccess(self):
         response = self.client.get(self.good_url)
+
         self.assertEqual(response.status_code, 200)
 
     def test_validUsernameReturnCorrectResult(self):
@@ -56,6 +56,7 @@ class UserPostListTest(APITestCase):
         Post.objects.all().delete()
 
         response = self.client.get(self.good_url)
+
         self.assertEqual(response.status_code, 200)
 
     def test_validUsernameWithNoPostReturnCorrectResult(self):
@@ -71,10 +72,10 @@ class UserPostListTest(APITestCase):
     def test_invalidUsernameReturnCorrectResult(self):
         response = self.client.get(self.bad_url)
         data = json.loads(response.content)
+
         self.assertEqual(data, [])
 
 
-# TODO: Implement
 @override_settings(MEDIA_ROOT=MEDIA_ROOT)
 class CreatePostTest(APITestCase):
     def setUp(self):
@@ -166,6 +167,7 @@ class SendFriendRequestTest(APITestCase):
         self.client.logout()
 
         response = self.client.post(self.url, {'id': self.user2.pk})
+
         self.assertEqual(response.status_code, 403)
 
     def test_unauthenticatedRequestReturnCorrentKeys(self):
@@ -179,6 +181,7 @@ class SendFriendRequestTest(APITestCase):
 
     def test_validRequestReturn204Success(self):
         response = self.client.post(self.url, {'id': self.user2.pk})
+
         self.assertEqual(response.status_code, 204)
 
     def test_validRequestReturnCorrectRelationship(self):
@@ -187,24 +190,29 @@ class SendFriendRequestTest(APITestCase):
         # make sure user1 has sent a friend request to user2
         relationship_exist = UserRelationship.objects.filter(
             user1=self.user1, user2=self.user2, relation_type='pending_user1_user2').exists()
+
         self.assertTrue(relationship_exist)
 
     def test_invalidRequestWithInvalidDataReturn400(self):
         response = self.client.post(self.url, {'id': INVALID_USER_PK})
+
         self.assertEqual(response.status_code, 400)
 
     def test_invalidRequestWithInvalidDataReturnCorrectKeys(self):
         response = self.client.post(self.url, {'id': INVALID_USER_PK})
         data = json.loads(response.content)
+
         self.assertTrue('detail' in data.keys())
 
     def test_invalidRequestWithNoDataReturn400(self):
         response = self.client.post(self.url)
+
         self.assertEqual(response.status_code, 400)
 
     def test_invalidRequestWithNoDataReturnCorrectKeys(self):
         response = self.client.post(self.url)
         data = json.loads(response.content)
+
         self.assertTrue('detail' in data.keys())
 
     def test_invalidRequestWithWrongRelationTypeReturn400(self):
@@ -214,6 +222,7 @@ class SendFriendRequestTest(APITestCase):
             user1=self.user1, user2=self.user2, relation_type='friends')
 
         response = self.client.post(self.url)
+
         self.assertEqual(response.status_code, 400)
 
     def test_invalidRequestWithWrongRelationTypeReturnCorrectKeys(self):
@@ -224,6 +233,7 @@ class SendFriendRequestTest(APITestCase):
 
         response = self.client.post(self.url)
         data = json.loads(response.content)
+
         self.assertTrue('detail' in data.keys())
 
 
@@ -253,6 +263,7 @@ class CancelFriendRequestTest(APITestCase):
         self.client.logout()
 
         response = self.client.post(self.url, {'id': self.user2.pk})
+
         self.assertEqual(response.status_code, 403)
 
     def test_unauthenticatedRequestReturnCorrentKeys(self):
@@ -266,6 +277,7 @@ class CancelFriendRequestTest(APITestCase):
 
     def test_validRequestReturn204Success(self):
         response = self.client.post(self.url, {'id': self.user2.pk})
+
         self.assertEqual(response.status_code, 204)
 
     def test_validRequestReturnCorrectRelationship(self):
@@ -274,24 +286,29 @@ class CancelFriendRequestTest(APITestCase):
         # make sure no relationship found between user1 and user2
         relationship_exist = UserRelationship.objects.filter(
             user1=self.user1, user2=self.user2).exists()
+
         self.assertTrue(not relationship_exist)
 
     def test_invalidRequestWithInvalidDataReturn400(self):
         response = self.client.post(self.url, {'id': INVALID_USER_PK})
+
         self.assertEqual(response.status_code, 400)
 
     def test_invalidRequestWithInvalidDataReturnCorrectKeys(self):
         response = self.client.post(self.url, {'id': INVALID_USER_PK})
         data = json.loads(response.content)
+
         self.assertTrue('detail' in data.keys())
 
     def test_invalidRequestWithNoDataReturn400(self):
         response = self.client.post(self.url)
+
         self.assertEqual(response.status_code, 400)
 
     def test_invalidRequestWithNoDataReturnCorrectKeys(self):
         response = self.client.post(self.url)
         data = json.loads(response.content)
+
         self.assertTrue('detail' in data.keys())
 
     def test_invalidRequestWithWrongRelationTypeReturn400(self):
@@ -300,6 +317,7 @@ class CancelFriendRequestTest(APITestCase):
         self.user_relationship.delete()
 
         response = self.client.post(self.url)
+
         self.assertEqual(response.status_code, 400)
 
     def test_invalidRequestWithWrongRelationTypeReturnCorrectKeys(self):
@@ -309,6 +327,7 @@ class CancelFriendRequestTest(APITestCase):
 
         response = self.client.post(self.url)
         data = json.loads(response.content)
+
         self.assertTrue('detail' in data.keys())
 
 
@@ -338,6 +357,7 @@ class AcceptFriendRequestTest(APITestCase):
         self.client.logout()
 
         response = self.client.post(self.url, {'id': self.user2.pk})
+
         self.assertEqual(response.status_code, 403)
 
     def test_unauthenticatedRequestReturnCorrentKeys(self):
@@ -351,6 +371,7 @@ class AcceptFriendRequestTest(APITestCase):
 
     def test_validRequestReturn204Success(self):
         response = self.client.post(self.url, {'id': self.user2.pk})
+
         self.assertEqual(response.status_code, 204)
 
     def test_validRequestReturnCorrectRelationship(self):
@@ -359,24 +380,29 @@ class AcceptFriendRequestTest(APITestCase):
         # make sure user1 and user2 are friends
         relationship_exist = UserRelationship.objects.filter(
             user1=self.user1, user2=self.user2, relation_type='friends').exists()
+
         self.assertTrue(relationship_exist)
 
     def test_invalidRequestWithInvalidDataReturn400(self):
         response = self.client.post(self.url, {'id': INVALID_USER_PK})
+
         self.assertEqual(response.status_code, 400)
 
     def test_invalidRequestWithInvalidDataReturnCorrectKeys(self):
         response = self.client.post(self.url, {'id': INVALID_USER_PK})
         data = json.loads(response.content)
+
         self.assertTrue('detail' in data.keys())
 
     def test_invalidRequestWithNoDataReturn400(self):
         response = self.client.post(self.url)
+
         self.assertEqual(response.status_code, 400)
 
     def test_invalidRequestWithNoDataReturnCorrectKeys(self):
         response = self.client.post(self.url)
         data = json.loads(response.content)
+
         self.assertTrue('detail' in data.keys())
 
     def test_invalidRequestWithWrongRelationTypeReturn400(self):
@@ -385,6 +411,7 @@ class AcceptFriendRequestTest(APITestCase):
         self.user_relationship.delete()
 
         response = self.client.post(self.url)
+
         self.assertEqual(response.status_code, 400)
 
     def test_invalidRequestWithWrongRelationTypeReturnCorrectKeys(self):
@@ -394,6 +421,7 @@ class AcceptFriendRequestTest(APITestCase):
 
         response = self.client.post(self.url)
         data = json.loads(response.content)
+
         self.assertTrue('detail' in data.keys())
 
 
@@ -423,6 +451,7 @@ class DeclineFriendRequestTest(APITestCase):
         self.client.logout()
 
         response = self.client.post(self.url, {'id': self.user2.pk})
+
         self.assertEqual(response.status_code, 403)
 
     def test_unauthenticatedRequestReturnCorrentKeys(self):
@@ -436,6 +465,7 @@ class DeclineFriendRequestTest(APITestCase):
 
     def test_validRequestReturn204Success(self):
         response = self.client.post(self.url, {'id': self.user2.pk})
+
         self.assertEqual(response.status_code, 204)
 
     def test_validRequestReturnCorrectRelationship(self):
@@ -444,24 +474,29 @@ class DeclineFriendRequestTest(APITestCase):
         # make sure no relationship record found between user1 and user2
         relationship_exist = UserRelationship.objects.filter(
             user1=self.user1, user2=self.user2).exists()
+
         self.assertTrue(not relationship_exist)
 
     def test_invalidRequestWithInvalidDataReturn400(self):
         response = self.client.post(self.url, {'id': INVALID_USER_PK})
+
         self.assertEqual(response.status_code, 400)
 
     def test_invalidRequestWithInvalidDataReturnCorrectKeys(self):
         response = self.client.post(self.url, {'id': INVALID_USER_PK})
         data = json.loads(response.content)
+
         self.assertTrue('detail' in data.keys())
 
     def test_invalidRequestWithNoDataReturn400(self):
         response = self.client.post(self.url)
+
         self.assertEqual(response.status_code, 400)
 
     def test_invalidRequestWithNoDataReturnCorrectKeys(self):
         response = self.client.post(self.url)
         data = json.loads(response.content)
+
         self.assertTrue('detail' in data.keys())
 
     def test_invalidRequestWithWrongRelationTypeReturn400(self):
@@ -470,6 +505,7 @@ class DeclineFriendRequestTest(APITestCase):
         self.user_relationship.delete()
 
         response = self.client.post(self.url)
+
         self.assertEqual(response.status_code, 400)
 
     def test_invalidRequestWithWrongRelationTypeReturnCorrectKeys(self):
@@ -479,6 +515,7 @@ class DeclineFriendRequestTest(APITestCase):
 
         response = self.client.post(self.url)
         data = json.loads(response.content)
+
         self.assertTrue('detail' in data.keys())
 
 
@@ -508,6 +545,7 @@ class RemoveFriendTest(APITestCase):
         self.client.logout()
 
         response = self.client.post(self.url, {'id': self.user2.pk})
+
         self.assertEqual(response.status_code, 403)
 
     def test_unauthenticatedRequestReturnCorrentKeys(self):
@@ -521,6 +559,7 @@ class RemoveFriendTest(APITestCase):
 
     def test_validRequestReturn204Success(self):
         response = self.client.post(self.url, {'id': self.user2.pk})
+
         self.assertEqual(response.status_code, 204)
 
     def test_validRequestReturnCorrectRelationship(self):
@@ -529,24 +568,29 @@ class RemoveFriendTest(APITestCase):
         # make sure no relationship record found for user1 and user2
         relationship_exist = UserRelationship.objects.filter(
             user1=self.user1, user2=self.user2).exists()
+
         self.assertTrue(not relationship_exist)
 
     def test_invalidRequestWithInvalidDataReturn400(self):
         response = self.client.post(self.url, {'id': INVALID_USER_PK})
+
         self.assertEqual(response.status_code, 400)
 
     def test_invalidRequestWithInvalidDataReturnCorrectKeys(self):
         response = self.client.post(self.url, {'id': INVALID_USER_PK})
         data = json.loads(response.content)
+
         self.assertTrue('detail' in data.keys())
 
     def test_invalidRequestWithNoDataReturn400(self):
         response = self.client.post(self.url)
+
         self.assertEqual(response.status_code, 400)
 
     def test_invalidRequestWithNoDataReturnCorrectKeys(self):
         response = self.client.post(self.url)
         data = json.loads(response.content)
+
         self.assertTrue('detail' in data.keys())
 
     def test_invalidRequestWithWrongRelationTypeReturn400(self):
@@ -555,6 +599,7 @@ class RemoveFriendTest(APITestCase):
         self.user_relationship.delete()
 
         response = self.client.post(self.url)
+
         self.assertEqual(response.status_code, 400)
 
     def test_invalidRequestWithWrongRelationTypeReturnCorrectKeys(self):
@@ -564,6 +609,7 @@ class RemoveFriendTest(APITestCase):
 
         response = self.client.post(self.url)
         data = json.loads(response.content)
+
         self.assertTrue('detail' in data.keys())
 
 
@@ -583,6 +629,7 @@ class UserDetailTest(APITestCase):
 
     def test_validRequestReturnSuccess(self):
         response = self.client.get(self.good_url)
+
         self.assertEqual(response.status_code, 200)
 
     def test_validRequestReturnCorrectResult(self):
@@ -598,6 +645,7 @@ class UserDetailTest(APITestCase):
 
     def test_invalidRequestReturn404(self):
         response = self.client.get(self.bad_url)
+
         self.assertEqual(response.status_code, 404)
 
     def test_invalidRequestReturnCorrectKeys(self):
@@ -628,6 +676,7 @@ class UserSearchListTest(APITestCase):
         self.client.logout()
 
         response = self.client.get(self.good_url)
+
         self.assertEqual(response.status_code, 403)
 
     def test_unauthenticatedRequestReturnCorrectKeys(self):
@@ -636,15 +685,18 @@ class UserSearchListTest(APITestCase):
 
         response = self.client.get(self.good_url)
         data = json.loads(response.content)
+
         self.assertTrue('detail' in data.keys())
 
     def test_validRequestReturnSuccess(self):
         response = self.client.get(self.good_url)
+
         self.assertEqual(response.status_code, 200)
 
     def test_validRequestReturnCorrectResult(self):
         response = self.client.get(self.good_url)
         data = json.loads(response.content)
+
         self.assertEqual(len(data), 2)
         self.assertEqual(data.sort(key=lambda x: x.get('id')), [{
             'id': self.user1.id,
@@ -699,6 +751,7 @@ class FriendListTest(APITestCase):
         self.client.logout()
 
         response = self.client.get(self.good_url)
+
         self.assertEqual(response.status_code, 403)
 
     def test_unauthenticatedRequestReturnCorrectKeys(self):

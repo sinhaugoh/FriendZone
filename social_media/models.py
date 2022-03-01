@@ -5,8 +5,6 @@ from .storage import OverwriteFileStorage
 
 DEFAULT_PROFILE_IMAGE_PATH = 'images/default_images/default_profile.png'
 
-# retrieve profile image path
-
 
 def get_profile_image_path(instance, _):
     return 'images/profile_images/{}/profile_image.jpg'.format(str(instance.pk))
@@ -55,7 +53,8 @@ class AppUser(AbstractUser):
     email = models.EmailField(
         max_length=256, null=False, blank=False, unique=True)
     profile_image = models.ImageField(max_length=256, null=True, blank=True,
-                                      upload_to=get_profile_image_path, storage=OverwriteFileStorage(), default=DEFAULT_PROFILE_IMAGE_PATH)
+                                      upload_to=get_profile_image_path, storage=OverwriteFileStorage(),
+                                      default=DEFAULT_PROFILE_IMAGE_PATH)
 
     # set email field as username
     USERNAME_FIELD = 'email'

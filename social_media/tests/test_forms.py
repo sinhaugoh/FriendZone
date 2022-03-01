@@ -36,12 +36,14 @@ class RegistrationFormTest(TestCase):
     def test_registrationFormWithExistingEmailReturnInvalid(self):
         self.input['email'] = self.user1.email
         form = RegistrationForm(data=self.input)
+
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors['email'], ['Email already in use.'])
 
     def test_registrationFormWithExistingUsernameReturnInvalid(self):
         self.input['username'] = self.user1.username
         form = RegistrationForm(data=self.input)
+
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors['username'], ['Username already in use.'])
 
@@ -80,6 +82,7 @@ class LoginFormTest(TestCase):
     def test_loginFormWithValidInputReturnValid(self):
         form = LoginForm(data={'email': self.user1.email,
                          'password': self.user1_password})
+
         self.assertTrue(form.is_valid())
 
     def test_loginFormWithInvalidEmailReturnInvalid(self):
@@ -128,22 +131,27 @@ class ProfileUpdateFormTest(TestCase):
         form = ProfileUpdateForm(data={'username': 'new_username',
                                        'email': 'new_email@email.com',
                                        }, instance=self.user1)
-        
+
         self.assertTrue(form.is_valid())
 
     def test_profileUpdateFormWithExistingEmailReturnInvalid(self):
-        form = ProfileUpdateForm(data={'email': self.user2.email}, instance=self.user1)
+        form = ProfileUpdateForm(
+            data={'email': self.user2.email}, instance=self.user1)
+
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors['email'], ['Email already in use.'])
 
     def test_profileUpdateFormWithExistingUsernameReturnInvalid(self):
-        form = ProfileUpdateForm(data={'username': self.user2.username}, instance=self.user1)
+        form = ProfileUpdateForm(
+            data={'username': self.user2.username}, instance=self.user1)
+
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors['username'], ['Username already in use.'])
 
     def test_profileUpdateFormReturnLowercaseEmail(self):
         email_input = 'VALID@EMAIL.COM'
-        form = ProfileUpdateForm(data={'email': email_input, 'username': self.user1.username}, instance=self.user1)
+        form = ProfileUpdateForm(
+            data={'email': email_input, 'username': self.user1.username}, instance=self.user1)
 
         self.assertTrue(form.is_valid())
         self.assertEqual(
@@ -151,33 +159,35 @@ class ProfileUpdateFormTest(TestCase):
 
     def test_profileUpdateFormReturnLowercaseUsername(self):
         username_input = 'VALIDUSERNAME'
-        form = ProfileUpdateForm(data={'email': self.user1.email, 'username': username_input}, instance=self.user1)
+        form = ProfileUpdateForm(
+            data={'email': self.user1.email, 'username': username_input}, instance=self.user1)
 
         self.assertTrue(form.is_valid())
         self.assertEqual(
             form.cleaned_data['username'], username_input.lower())
-        
-        
+
+
 class PostFormTest(TestCase):
     def setUp(self):
         super().setUp()
-        
+
     def tearDown(self):
         super().tearDown()
-        
+
     def test_postFormContainRequiredFields(self):
         form = PostForm()
-        
+
         self.assertIn('text', form.fields)
         self.assertIn('image', form.fields)
-        
+
     def test_postFormWithValidInputReturnValid(self):
         form = PostForm(data={'text': 'TEST'})
-        
+
         self.assertTrue(form.is_valid())
-        
+
     def test_postFormWithNoTextAndImageReturnInvalid(self):
         form = PostForm(data={})
-        
+
         self.assertFalse(form.is_valid())
-        self.assertEqual(form.errors['__all__'], ['You must at least provide an image or status text'])
+        self.assertEqual(form.errors['__all__'], [
+                         'You must at least provide an image or status text'])
