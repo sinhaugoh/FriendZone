@@ -125,7 +125,9 @@
     <script type="text/javascript">
         function runSearchQuery() {
             let input = document.getElementById("search-input").value;
-            window.location.replace("{% url 'search' %}?query=" + input);
+            if (input != null && input != '') {
+                window.location.replace("{% url 'search' %}?query=" + input);
+            }
 
             return false;
         }
