@@ -39,7 +39,7 @@
         <div class="flex mb-2 items-center">
             <img class="avatar" src="{{ post.owner_profile_image_path }}">
             <div>
-                <p class="text-xl font-semibold">{{ post.owner_username }}</p>
+                <a href="{% url 'profile' username=post.owner_username %}" class="text-xl font-semibold">{{ post.owner_username }}</a>
                 <p>{{ post.post_date_created|date:'Y-m-d H:i' }}</p>
             </div>
         </div>
