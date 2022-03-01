@@ -5,8 +5,7 @@ from rest_framework.test import APITestCase
 from django.urls import reverse
 import json
 
-from ..model_factories import AppUserFactory, UserRelationshipFactory, PostFactory
-from ..models import AppUser, UserRelationship, Post
+from ..model_factories import *
 
 
 MEDIA_ROOT = tempfile.mkdtemp()

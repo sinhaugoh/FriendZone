@@ -3,9 +3,8 @@ import tempfile
 import shutil
 
 
-from ..models import AppUser, Post
-from ..model_factories import AppUserFactory, PostFactory
-from ..serializers import AppUserSerializer, FriendListSerializer, PostSerializer
+from ..model_factories import *
+from ..serializers import *
 
 MEDIA_ROOT = tempfile.mkdtemp()
 
