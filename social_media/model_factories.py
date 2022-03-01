@@ -1,5 +1,4 @@
 import factory
-from django.core.files.uploadedfile import SimpleUploadedFile
 
 from .models import *
 
