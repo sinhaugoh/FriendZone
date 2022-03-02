@@ -36,6 +36,8 @@ class UserPostList(generics.ListAPIView):
 
         posts = Post.objects.filter(
             owner__username=username).order_by('-date_created')
+        
+        # reformat the date_created field
         for post in posts:
             post.date_created = post.date_created.strftime("%Y-%m-%d %H:%M")
 

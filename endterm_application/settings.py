@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'chat.apps.ChatConfig',
 ]
 
-# TODO: to be changed to restrict access
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',

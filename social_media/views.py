@@ -22,7 +22,7 @@ def index(request):
     relationships = UserRelationship.objects.filter(
         Q(user1=app_user) | Q(user2=app_user), relation_type='friends')
 
-    # a list of users where their post will be displayed
+    # get a list of users where their post will be displayed
     post_users = [app_user]
     for relationship in relationships:
         if relationship.user1.pk == app_user.pk:
@@ -78,6 +78,7 @@ def user_login(request):
     return render(request, 'social_media/login.html', {'login_form': login_form})
 
 
+@never_cache
 def register(request):
     '''
     Registration page
