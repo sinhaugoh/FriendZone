@@ -7,6 +7,12 @@ A social media web application where people can network with each other.
 - Real time chat
 - Search function
 
+## Screenshots
+![Home page](/screenshots/home_page.png)
+![Login page](/screenshots/login_page.png)
+![Chatroom page](/screenshots/chatroom_page.png)
+![Friend list page](/screenshots/friend_list_page.png)
+
 ## Setup
 
 To run this project, install the required python packages:
