@@ -5,7 +5,7 @@ A social media web application where people can network with each other.
 - Feeds Sharing
 - Make friend by sending friend request
 - Real time chat
-- Search function
+- User search
 
 ## Screenshots
 ![Home page](/screenshots/home_page.png)
